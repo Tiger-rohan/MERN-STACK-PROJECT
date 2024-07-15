@@ -4,10 +4,12 @@ import Navbar from '../src/components/Navbar'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import TaskManager from './pages/TaskManager'
 import axios from 'axios'
 import {Toaster} from 'react-hot-toast'
 import {UserContextProvider} from '../context/userContext'
 import Dashboard from './pages/Dashboard'
+
 
 
 axios.defaults.baseURL = 'http://localhost:8000'
@@ -23,8 +25,12 @@ function App() {
       <Route path='/register' element={<Register/>}></Route>
       <Route path='/login' element={<Login/>}></Route>
       <Route path='/dashboard' element={<Dashboard/>}></Route>
+<<<<<<< HEAD
       <Route path='/admin' element={<Admin/>}></Route>
       <Route path='/user' element={<User/>}></Route>
+=======
+      <Route path='/task-manager' element={<TaskManager />} />
+>>>>>>> 8b5ae7c (TaskManager added)
     </Routes>
    </UserContextProvider>
   );
