@@ -71,18 +71,43 @@ try{
 }
 
 
-const getProfile = (req,res) =>{
+// const getProfile = (req,res) =>{
 
-    const {token} = req.cookies;
-    if(token){
-        jwt.verify(token,process.env.JWT_SECRET,{},(err,user)=>{
-            if(err) throw err;
-            res.json(user)
-        })
-    } else{
-        res.json(null)
+//     const {token} = req.cookies;
+//     if(token){
+//         jwt.verify(token,process.env.JWT_SECRET,{},(err,user)=>{
+//             if(err) throw err;
+//             res.json(user)
+//             console.log(user)
+//         })
+//     } else{
+//         res.json(null)
+//     }
+
+// }
+const getProfile = async (req, res) => {
+    const { token } = req.cookies;
+    if (token) {
+        jwt.verify(token, process.env.JWT_SECRET, {}, async (err, decodedToken) => {
+            if (err) {
+                return res.status(401).json({ msg: 'Token is not valid' });
+            }
+            try {
+                const user = await User.findById(decodedToken.id).select('-password'); // Exclude password from the response
+                if (!user) {
+                    return res.status(404).json({ msg: 'User not found' });
+                }
+                res.json(user);
+                console.log(user);
+            } catch (error) {
+                console.error(error.message);
+                res.status(500).send('Server error');
+            }
+        });
+    } else {
+        res.json(null);
     }
+};
 
-}
 
 module.exports={test,registerUser,loginUser,getProfile}
