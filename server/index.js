@@ -1,9 +1,11 @@
 const express = require('express')
-const dotenv = require('dotenv').config()
+const dotenv = require('dotenv')
 const cors = require('cors')
 const {mongoose} = require('mongoose')
 const cookieParser = require('cookie-parser')
 const app = express();
+
+dotenv.config({path: './config.env'})
 
 mongoose.connect(process.env.MONGO_URL)
 .then(()=>console.log('connected to db'))
