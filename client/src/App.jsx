@@ -23,6 +23,8 @@ function App() {
       <Route path='/register' element={<Register/>}></Route>
       <Route path='/' element={<Login/>}></Route>
       <Route path='/dashboard' element={<Dashboard/>}></Route>
+      <Route path='/admin' element={<Admin/>}></Route>
+      <Route path='/user' element={<User/>}></Route>
     </Routes>
    </UserContextProvider>
   );

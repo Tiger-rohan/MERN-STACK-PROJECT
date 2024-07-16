@@ -10,7 +10,7 @@ const test =(req,res) =>{
 //register endpoint
 const registerUser = async (req,res) =>{
 try{
-    const {name,email,password} = req.body;
+    const {name,email,password, role} = req.body;
     //check if user exists
     if(!name){
         return res.json({
@@ -31,7 +31,7 @@ try{
     }
 
     const hashedPassword = await hashPassword(password)
-        const user = await User.create({name,email,password:hashedPassword,
+        const user = await User.create({name,email,password:hashedPassword,role
         })
         return res.json(user)
     }
@@ -46,7 +46,7 @@ catch(error){
 
 const loginUser = async (req,res) =>{
 try{
-    const {email,password} = req.body;
+    const {email,password, role} = req.body;
     const user =await User.findOne({email});
     if(!user){
         return res.json({

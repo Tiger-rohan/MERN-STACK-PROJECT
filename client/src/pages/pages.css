@@ -1,83 +1,92 @@
 /* Container */
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  
-  /* Form */
-  form {
-    width: 300px;
-    padding: 20px;
-    background-color:#f2f2f2;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    animation: slideInDown 0.5s ease;
-  }
-  
-  @keyframes slideInDown {
-    from {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Form */
+form {
+  width: 300px;
+  padding: 20px;
+  background-color: #f2f2f2;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  animation: slideInDown 0.5s ease;
+}
+
+@keyframes slideInDown {
+  from {
       transform: translateY(-50px);
       opacity: 0;
-    }
-    to {
+  }
+  to {
       transform: translateY(0);
       opacity: 1;
-    }
   }
-  
-  /* Label */
-  label {
-    font-weight: bold;
-    margin-bottom: 8px;
-    display: block;
-    text-align: left;
-    color: #333;
-  }
-  
-  /* Input */
-  input[type="text"],
-  input[type="email"],
-  input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    transition: all 0.3s ease;
-    color: #ccc;
-  }
-  
-  input[type="text"]:focus,
-  input[type="email"]:focus,
-  input[type="password"]:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-    background-color: #333;
-  }
-  
-  /* Button */
-  button[type="submit"] {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  button[type="submit"]:hover {
-    background-color: #0056b3;
-  }
-  
+}
 
+/* Label */
+label {
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: block;
+  text-align: left;
+  color: #333;
+}
 
- /* Dashboard styles */
+/* Input */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  color: #333; /* Adjusted color for better readability */
+}
 
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  background-color: #e9ecef; /* Light gray for focus state */
+}
+
+/* Button */
+button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+/* Dropdown specific styles */
+select {
+  appearance: none; /* Remove default dropdown styling */
+  background-color: #fff; /* White background for dropdown */
+  padding-right: 30px; /* Space for custom arrow (if you add one) */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill="currentColor" d="M1.5 5.5L8 12l6.5-6.5H1.5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px center; /* Position of the arrow */
+}
+
+/* Dashboard styles */
 .dashboard-container {
   width: 100%;
   max-width: 800px;
