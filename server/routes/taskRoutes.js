@@ -1,11 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const { createTask, getTasks, updateTask, deleteTask } = require('../controllers/taskController');
-const { protect } = require('../middleware/authMiddleware');
+const cors = require('cors');
+const { createTask, getTasks, getTaskById, updateTask, deleteTask } = require('../controllers/taskController');
 
-router.post('/', protect, createTask);
-router.get('/', protect, getTasks);
-router.put('/:id', protect, updateTask);
-router.delete('/:id', protect, deleteTask);
+router.use(cors({
+    credentials: true,
+    origin: 'http://localhost:5173'
+}));
+
+router.post('/tasks', createTask);
+router.get('/tasks', getTasks);
+router.get('/tasks/:id', getTaskById);
+router.put('/tasks/:id', updateTask);
+router.delete('/tasks/:id', deleteTask);
 
 module.exports = router;
