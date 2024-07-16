@@ -1,43 +1,59 @@
+// controllers/projectController.js
 const Project = require('../models/Project');
 
+// Create a project
 const createProject = async (req, res) => {
-  const { name, description, startDate, endDate, owner } = req.body;
-  try {
-    const project = await Project.create({ name, description, startDate, endDate, owner });
-    res.status(201).json(project);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
+    const { project_name, project_description, owner_id } = req.body; // Adjusted to match the schema
+    try {
+        const newProject = new Project({ project_name, project_description, owner_id }); // Use owner_id and task_ids
+        await newProject.save();
+        res.status(201).json(newProject);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error creating project' });
+    }
 };
 
-const getProjects = async (req, res) => {
-  try {
-    const projects = await Project.find({}).populate('owner', 'name email');
-    res.json(projects);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
+// Update a project
 const updateProject = async (req, res) => {
-  const { id } = req.params;
-  const { name, description, startDate, endDate, owner } = req.body;
-  try {
-    const project = await Project.findByIdAndUpdate(id, { name, description, startDate, endDate, owner }, { new: true });
-    res.json(project);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
+    const { projectId } = req.params;
+    const updateData = req.body;
+    try {
+        const updatedProject = await Project.findOneAndUpdate({ project_id: projectId }, updateData, { new: true }); // Use project_id instead of MongoDB ObjectId
+        if (!updatedProject) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+        res.json(updatedProject);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error updating project' });
+    }
 };
 
+// Delete a project
 const deleteProject = async (req, res) => {
-  const { id } = req.params;
-  try {
-    await Project.findByIdAndDelete(id);
-    res.json({ message: 'Project deleted' });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
+    const { projectId } = req.params;
+    try {
+        const deletedProject = await Project.findOneAndDelete({ project_id: projectId }); // Use project_id instead of MongoDB ObjectId
+        if (!deletedProject) {
+            return res.status(404).json({ error: 'Project not found' });
+        }
+        res.json({ message: 'Project deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error deleting project' });
+    }
 };
 
-module.exports = { createProject, getProjects, updateProject, deleteProject };
+// Get all projects
+const getProjects = async (req, res) => {
+    try {
+        const projects = await Project.find(); // Removed population since owner_id and task_ids are now simple fields
+        res.json(projects);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error fetching projects' });
+    }
+};
+
+module.exports = { createProject, updateProject, deleteProject, getProjects };
