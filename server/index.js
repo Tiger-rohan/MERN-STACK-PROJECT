@@ -1,22 +1,53 @@
-const express = require('express')
-const dotenv = require('dotenv')
-const cors = require('cors')
-const {mongoose} = require('mongoose')
-const cookieParser = require('cookie-parser')
+// const express = require('express')
+// const dotenv = require('dotenv')
+// const cors = require('cors')
+// const {mongoose} = require('mongoose')
+// const cookieParser = require('cookie-parser')
+// const app = express();
+
+// dotenv.config({path: './config.env'})
+
+// mongoose.connect(process.env.MONGO_URL)
+// .then(()=>console.log('connected to db'))
+// .catch((err)=>console.log(err))
+
+// //middleware
+// app.use(express.json())
+// app.use(cookieParser());
+// app.use(express.urlencoded({extended:false}))
+
+// app.use('/' , require('./routes/authRoutes'))
+
+// const port = 8000;
+// app.listen(port,()=>console.log(`server running on port ${port}`))
+
+const express = require('express');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
+const authRoutes = require('./routes/authRoutes');
+const projectRoutes = require('./routes/projectRoutes');
 const app = express();
 
-dotenv.config({path: './config.env'})
+dotenv.config({ path: './config.env' });
 
 mongoose.connect(process.env.MONGO_URL)
-.then(()=>console.log('connected to db'))
-.catch((err)=>console.log(err))
+  .then(() => console.log('connected to db'))
+  .catch((err) => console.log(err));
 
-//middleware
-app.use(express.json())
+// Middleware
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow requests from your frontend URL
+  credentials: true // Allow credentials
+}));
+app.use(express.json());
 app.use(cookieParser());
-app.use(express.urlencoded({extended:false}))
+app.use(express.urlencoded({ extended: false }));
 
-app.use('/' , require('./routes/authRoutes'))
+// Routes
+app.use('/', authRoutes);
+app.use('/api/projects', projectRoutes);
 
 const port = 8000;
-app.listen(port,()=>console.log(`server running on port ${port}`))
+app.listen(port, () => console.log(`server running on port ${port}`));
