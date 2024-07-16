@@ -25,6 +25,7 @@ function App() {
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
         <Route path='/dashboard' element={<Dashboard />} />
+<<<<<<< HEAD
   <<<<<<< HEAD
       <Route path='/admin' element={<Admin/>}></Route>
       <Route path='/user' element={<User/>}></Route>
@@ -33,6 +34,11 @@ function App() {
         <Route path='/create-project' element={<CreateProject />} /> {/* Add the route for CreateProject */}
   >>>>>>> 8b5ae7c (TaskManager added)
     </Routes>
+=======
+        <Route path='/task-manager' element={<TaskManager />} />
+        <Route path='/create-project' element={<CreateProject />} /> {/* Add the route for CreateProject */}
+      </Routes>
+>>>>>>> e4ff93ecf9f64861c6366b27b2518f57ddf0af95
     </UserContextProvider>
   );
 }
