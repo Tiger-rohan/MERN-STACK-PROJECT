@@ -16,13 +16,13 @@ const registerUser = async (e) => {
         const{name , email, password} = data
         try {
           const {data} = await axios.post("/register", {name, email, password});
-        
+
         if (data.error) {
           toast.error(data.error);
         } else{
           setData({})
           toast.success("Registration successful. Please login")
-          navigate('/login')
+          navigate('/')
 
         }
       }catch (error) {
