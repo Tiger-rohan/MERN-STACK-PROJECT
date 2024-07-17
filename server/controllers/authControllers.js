@@ -5,7 +5,7 @@ const jwt =require('jsonwebtoken');
 
 const test =(req,res) =>{
     res.json("testing server")
-    
+
 }
 //register endpoint
 const registerUser = async (req,res) =>{
@@ -85,6 +85,16 @@ try{
 //     }
 
 // }
+
+const fetchAllUsers = async (req, res) => {
+    try {
+      const users = await User.find();
+      res.json(users);
+    //   console.log(users)
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
 const getProfile = async (req, res) => {
     const { token } = req.cookies;
     if (token) {
@@ -110,4 +120,4 @@ const getProfile = async (req, res) => {
 };
 
 
-module.exports={test,registerUser,loginUser,getProfile}
+module.exports={test,registerUser,loginUser,getProfile,fetchAllUsers}

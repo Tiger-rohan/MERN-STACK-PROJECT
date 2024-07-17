@@ -1,7 +1,7 @@
 const express =require('express');
 const router =express.Router();
 const cors = require('cors');
-const {test,registerUser,loginUser,getProfile} = require('../controllers/authControllers');
+const {test,registerUser,loginUser,getProfile,fetchAllUsers} = require('../controllers/authControllers');
 
 
 router.use(cors({
@@ -10,6 +10,7 @@ router.use(cors({
 }));
 
 router.get('/',test);
+router.get('/fetchAllUsers',fetchAllUsers);
 router.post('/register',registerUser);
 router.post('/login',loginUser);
 router.get('/profile',getProfile);
