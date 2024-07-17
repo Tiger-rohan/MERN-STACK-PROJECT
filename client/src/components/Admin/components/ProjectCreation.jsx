@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-// import './ProjectCreation.css'; // Optional: for custom styling
+
 
 const ProjectCreation = () => {
     const [projectData, setProjectData] = useState({

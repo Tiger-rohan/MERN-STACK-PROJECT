@@ -36,7 +36,6 @@
 // export default App
 import './App.css';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Navbar from '../src/components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
