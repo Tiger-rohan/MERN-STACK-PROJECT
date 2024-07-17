@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser')
 const app = express();
 const projectRoutes = require('./routes/projectRoutes');
 const taskRoutes = require('./routes/taskRoutes');
+const userDetails = require('./routes/userDetailsRoutes');
 
 dotenv.config({path: './config.env'})
 
@@ -23,6 +24,9 @@ app.use('/api/projects', projectRoutes);
 
 //task
 app.use('/api', taskRoutes);
+
+//user details
+app.use('/api/userDetails',userDetails);
 
 
 const port = 8000;
