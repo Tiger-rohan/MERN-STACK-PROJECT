@@ -2,7 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import ProjectCreation from "./components/ProjectCreation";
 import CreateTask from "./components/Tasks/CreateTasks";
-import './Admin.css';
+import { Container, Typography, Button, Grid } from '@mui/material';
+
 
 function Admin() {
     const navigate = useNavigate();
@@ -16,21 +17,29 @@ function Admin() {
     };
 
     return (
-        <>
-            <h1>Admin</h1>
+        <Container>
+            <Typography variant="h3" component="h1" gutterBottom>
+                Admin
+            </Typography>
 
-            <div className="admin-container">
-                <div className="form-container">
+            <Grid container spacing={4}>
+                <Grid item xs={12} md={6}>
                     <ProjectCreation />
-                </div>
-                <div className="form-container">
+                </Grid>
+                <Grid item xs={12} md={6}>
                     <CreateTask />
-                </div>
-            </div>
+                </Grid>
+            </Grid>
 
-            {/* Logout Button */}
-            <button className="logout-button" onClick={handleLogout}>Logout</button>
-        </>
+            <Button 
+                variant="contained" 
+                color="secondary" 
+                onClick={handleLogout} 
+                sx={{ mt: 4 }}
+            >
+                Logout
+            </Button>
+        </Container>
     );
 };
 

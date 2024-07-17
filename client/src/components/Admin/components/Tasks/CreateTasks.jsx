@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
+import { TextField, Button, Container, Typography, Box, Paper, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 
 const CreateTask = () => {
   const [taskDescription, setTaskDescription] = useState('');
@@ -35,59 +35,75 @@ const CreateTask = () => {
   };
 
   return (
-    <div>
-      <h2>Create Task</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Task Description:</label>
-          <input
-            type="text"
-            value={taskDescription}
-            onChange={(e) => setTaskDescription(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Due Date:</label>
-          <input
-            type="date"
-            value={taskDueDate}
-            onChange={(e) => setTaskDueDate(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Status:</label>
-          <select value={taskStatus} onChange={(e) => setTaskStatus(e.target.value)}>
-            <option value="not started">Not Started</option>
-            <option value="in-progress">In Progress</option>
-            <option value="blocked">Blocked</option>
-            <option value="completed">Completed</option>
-          </select>
-        </div>
-        <div>
-          <label>Owner ID:</label>
-          <input
-            type="number"
-            value={ownerId}
-            onChange={(e) => setOwnerId(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Project ID:</label>
-          <input
-            type="number"
-            value={projectId}
-            onChange={(e) => setProjectId(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Create Task</button>
-      </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
-    </div>
+    <Container maxWidth="sm">
+      <Box sx={{ mt: 4 }}>
+        <Paper elevation={3} sx={{ p: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Create Task
+          </Typography>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              label="Task Description"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={taskDescription}
+              onChange={(e) => setTaskDescription(e.target.value)}
+              required
+            />
+            <TextField
+              label="Due Date"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              value={taskDueDate}
+              onChange={(e) => setTaskDueDate(e.target.value)}
+              required
+            />
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Status</InputLabel>
+              <Select
+                value={taskStatus}
+                onChange={(e) => setTaskStatus(e.target.value)}
+                label="Status"
+              >
+                <MenuItem value="not started">Not Started</MenuItem>
+                <MenuItem value="in-progress">In Progress</MenuItem>
+                <MenuItem value="blocked">Blocked</MenuItem>
+                <MenuItem value="completed">Completed</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField
+              label="Owner ID"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              type="number"
+              value={ownerId}
+              onChange={(e) => setOwnerId(e.target.value)}
+              required
+            />
+            <TextField
+              label="Project ID"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              type="number"
+              value={projectId}
+              onChange={(e) => setProjectId(e.target.value)}
+              required
+            />
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              Create Task
+            </Button>
+          </form>
+          {error && <Typography color="error" mt={2}>{error}</Typography>}
+          {success && <Typography color="success" mt={2}>{success}</Typography>}
+        </Paper>
+      </Box>
+    </Container>
   );
 };
 

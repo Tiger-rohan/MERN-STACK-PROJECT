@@ -2,7 +2,8 @@ import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
-import './pages.css';
+import { TextField, Button, Select, MenuItem, InputLabel, FormControl, Container, Typography, Box, Paper } from '@mui/material';
+
 
 export default function Register() {
   const navigate = useNavigate();
@@ -18,18 +19,15 @@ export default function Register() {
     e.preventDefault();
     const { user_name, email, password, role } = data;
     try {
-        // First, register the user
         const { data: responseData } = await axios.post("/register", { user_name, email, password, role });
 
         if (responseData.error) {
             toast.error(responseData.error);
         } else {
-            // Assuming responseData contains user_id from the backend registration response
             const { user_id } = responseData;
 
-            // Post user details to /userDetails API
             const userDetailsResponse = await axios.post("/api/userDetails", {
-                user_id, // Use the user_id from the registration response
+                user_id,
                 user_name,
                 email,
                 role,
@@ -39,10 +37,8 @@ export default function Register() {
             if (userDetailsResponse.status === 201) {
                 toast.success("Registration successful. Please login");
 
-                // Reset form data
                 setData({ user_name: "", email: "", password: "", role: "" });
 
-                // Redirect to login page
                 navigate('/');
             } else {
                 toast.error("Failed to save user details. Please try again.");
@@ -55,48 +51,65 @@ export default function Register() {
   };
 
   return (
-    <div>
-      <form onSubmit={registerUser}>
-        <label>Username:</label>
-        <input 
-          type="text" 
-          name="user_name" 
-          value={data.user_name} 
-          onChange={(e) => setData({ ...data, user_name: e.target.value })} 
-        />
-        
-        <label>Email:</label>
-        <input 
-          type="email" 
-          name="email" 
-          value={data.email} 
-          onChange={(e) => setData({ ...data, email: e.target.value })} 
-        />
-        
-        <label>Password:</label>
-        <input 
-          type="password" 
-          name="password" 
-          value={data.password} 
-          onChange={(e) => setData({ ...data, password: e.target.value })} 
-        />
-        
-        <label>Role:</label>
-        <select 
-          name="role" 
-          value={data.role} 
-          onChange={(e) => setData({ ...data, role: e.target.value })} 
-        >
-          <option value="">Select Role</option>
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-        </select>
-        
-        <button type="submit">Submit</button>
-      </form>
-      <div className="login-link">
-        <p>Already have an account? <Link to="/">Sign in</Link></p>
-      </div>
-    </div>
+    <Container maxWidth="sm">
+      <Box sx={{ mt: 4 }}>
+        <Paper elevation={3} sx={{ p: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Register
+          </Typography>
+          <form onSubmit={registerUser}>
+            <TextField
+              label="Username"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              name="user_name"
+              value={data.user_name}
+              onChange={(e) => setData({ ...data, user_name: e.target.value })}
+            />
+            <TextField
+              label="Email"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              type="email"
+              name="email"
+              value={data.email}
+              onChange={(e) => setData({ ...data, email: e.target.value })}
+            />
+            <TextField
+              label="Password"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              type="password"
+              name="password"
+              value={data.password}
+              onChange={(e) => setData({ ...data, password: e.target.value })}
+            />
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Role</InputLabel>
+              <Select
+                name="role"
+                value={data.role}
+                onChange={(e) => setData({ ...data, role: e.target.value })}
+              >
+                <MenuItem value="">Select Role</MenuItem>
+                <MenuItem value="user">User</MenuItem>
+                <MenuItem value="admin">Admin</MenuItem>
+              </Select>
+            </FormControl>
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              Submit
+            </Button>
+          </form>
+          <Box mt={2}>
+            <Typography variant="body2">
+              Already have an account? <Link to="/">Sign in</Link>
+            </Typography>
+          </Box>
+        </Paper>
+      </Box>
+    </Container>
   );
 }
