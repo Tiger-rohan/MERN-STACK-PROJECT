@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './pages.css';
 
 export default function Register() {
@@ -24,7 +24,6 @@ export default function Register() {
         if (responseData.error) {
             toast.error(responseData.error);
         } else {
-                        
             // Reset form data
             setData({ user_name: "", email: "", password: "", role: "" });
             toast.success("Registration successful. Please login");
@@ -78,6 +77,9 @@ export default function Register() {
         
         <button type="submit">Submit</button>
       </form>
+      <div className="login-link">
+        <p>Already have an account? <Link to="/login">Sign in</Link></p>
+      </div>
     </div>
   );
 }
