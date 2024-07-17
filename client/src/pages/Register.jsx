@@ -24,12 +24,29 @@ export default function Register() {
         if (responseData.error) {
             toast.error(responseData.error);
         } else {
-            // Reset form data
-            setData({ user_name: "", email: "", password: "", role: "" });
-            toast.success("Registration successful. Please login");
-            
-            // Redirect to login page
-            navigate('/login');
+            // Assuming responseData contains user_id from the backend registration response
+            const { user_id } = responseData;
+
+            // Post user details to /userDetails API
+            const userDetailsResponse = await axios.post("/api/userDetails", {
+                user_id, // Use the user_id from the registration response
+                user_name,
+                email,
+                role,
+                ProjectDescription: []
+            });
+
+            if (userDetailsResponse.status === 201) {
+                toast.success("Registration successful. Please login");
+
+                // Reset form data
+                setData({ user_name: "", email: "", password: "", role: "" });
+
+                // Redirect to login page
+                navigate('/');
+            } else {
+                toast.error("Failed to save user details. Please try again.");
+            }
         }
     } catch (error) {
         console.log(error);
@@ -43,7 +60,7 @@ export default function Register() {
         <label>Username:</label>
         <input 
           type="text" 
-          name="username" 
+          name="user_name" 
           value={data.user_name} 
           onChange={(e) => setData({ ...data, user_name: e.target.value })} 
         />
@@ -78,7 +95,7 @@ export default function Register() {
         <button type="submit">Submit</button>
       </form>
       <div className="login-link">
-        <p>Already have an account? <Link to="/login">Sign in</Link></p>
+        <p>Already have an account? <Link to="/">Sign in</Link></p>
       </div>
     </div>
   );

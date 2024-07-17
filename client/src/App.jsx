@@ -1,6 +1,6 @@
 import './App.css'
 import {Routes, Route} from 'react-router-dom'
-import Navbar from '../src/components/Navbar'
+// import Navbar from '../src/components/Navbar'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -17,18 +17,17 @@ axios.defaults.withCredentials = true;
 function App() {
   return (
     <UserContextProvider>
-  <Navbar></Navbar>
-  <Toaster position='bottom-right' toastOptions={{duration: 2000}}/>
-    <Routes>
-      {/* <Route path='/' element={<Home/>}></Route> */}
-      <Route path='/register' element={<Register/>}></Route>
-      <Route path='/' element={<Login/>}></Route>
-      <Route path='/dashboard' element={<Dashboard/>}></Route>
-      <Route path='/admin' element={<Admin/>}></Route>
-      <Route path='/user' element={<User/>}></Route>
-
-    </Routes>
-   </UserContextProvider>
+      
+      <Toaster position='bottom-right' toastOptions={{ duration: 2000 }} />
+      <Routes>
+        <Route path='/' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+        <Route path='/home' element={<Home />} />
+        <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='/admin' element={<Admin />} />
+        <Route path='/user' element={<User />} />
+      </Routes>
+    </UserContextProvider>
   );
 }
 

@@ -12,7 +12,7 @@ function Admin() {
         document.cookie = 'authToken=; Max-Age=-1;'; // Set Max-Age to expire cookie immediately
 
         // Redirect to login page
-        navigate('/login');
+        navigate('/');
     };
 
     return (

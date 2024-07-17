@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
-
 const ProjectCreation = () => {
     const [projectData, setProjectData] = useState({
         project_name: '',
@@ -18,11 +17,32 @@ const ProjectCreation = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('/api/projects', {
-                ...projectData, // Convert string input to array of numbers
+            // Create the project
+            const projectResponse = await axios.post('/api/projects', {
+                ...projectData,
             });
+            
+            const createdProject = projectResponse.data;
             toast.success('Project created successfully!');
-            console.log(response.data);
+
+            // Update the user details
+            const userDetailsResponse = await axios.put(`/api/userDetails/${projectData.owner_id}`, {
+                ProjectDescription: [{
+                    project_id: createdProject.project_id,
+                    project_name: createdProject.project_name,
+                    project_description: createdProject.project_description,
+                    owner_id: createdProject.owner_id,
+                    TaskDescription: []
+                }]
+            });
+
+            if (userDetailsResponse.status === 200) {
+                toast.success('User details updated successfully!');
+            } else {
+                toast.error('Failed to update user details.');
+            }
+
+            console.log(projectResponse.data);
             setProjectData({ project_name: '', project_description: '', owner_id: '' }); // Reset form
         } catch (error) {
             console.error(error);
