@@ -6,8 +6,8 @@ export const loginUser = createAsyncThunk('user/login', async (userData, { rejec
   try {
     const response = await api.login(userData);
     const token = response.data.token;
-    Cookies.set('token', token);
-    localStorage.setItem('jwtToken', token);
+    localStorage.setItem('token', token);
+    Cookies.set('token', token)
     console.log(response)
     return response.data; // Assuming response.data contains user object
   } catch (error) {
