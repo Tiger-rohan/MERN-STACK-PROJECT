@@ -37,15 +37,22 @@ exports.createUserDetails = async (req, res) => {
 // Update user details by ID
 exports.updateUserDetails = async (req, res) => {
     try {
-        const updatedUserDetails = await UserDetails.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!updatedUserDetails) {
+        const userDetails = await UserDetails.findOne({ user_id: req.params.id });
+
+        if (!userDetails) {
             return res.status(404).json({ message: 'User details not found' });
         }
+
+        userDetails.ProjectDescription.push(req.body.ProjectDescription[0]);
+
+        const updatedUserDetails = await userDetails.save();
         res.status(200).json(updatedUserDetails);
     } catch (error) {
+        console.error(error);
         res.status(400).json({ message: error.message });
     }
 };
+
 
 // Delete user details by ID
 exports.deleteUserDetails = async (req, res) => {
