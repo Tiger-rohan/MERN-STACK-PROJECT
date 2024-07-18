@@ -1,5 +1,7 @@
 import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const ProjectList = ({ projects, onEdit, onDelete }) => {
     return (
@@ -20,20 +22,18 @@ const ProjectList = ({ projects, onEdit, onDelete }) => {
                             <TableCell>{project.project_description}</TableCell>
                             <TableCell>{project.owner_id}</TableCell>
                             <TableCell>
-                                <Button 
-                                    variant="contained" 
+                                <IconButton 
                                     color="primary" 
                                     onClick={() => onEdit(project)}
                                 >
-                                    Edit
-                                </Button>
-                                <Button 
-                                    variant="contained" 
+                                    <EditIcon />
+                                </IconButton>
+                                <IconButton 
                                     color="secondary" 
                                     onClick={() => onDelete(project.project_id)}
                                 >
-                                    Delete
-                                </Button>
+                                    <DeleteIcon />
+                                </IconButton>
                             </TableCell>
                         </TableRow>
                     ))}
