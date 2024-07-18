@@ -10,6 +10,8 @@ const TaskForm = ({ task, onSave, onCancel }) => {
         owner_id: '',
         project_id: ''
     });
+    const [projects, setProjects] = useState([]);
+    const [owners, setOwners] = useState([]);
 
     useEffect(() => {
         if (task) {
@@ -27,6 +29,21 @@ const TaskForm = ({ task, onSave, onCancel }) => {
             });
         }
     }, [task]);
+
+    useEffect(() => {
+        const fetchProjectsAndOwners = async () => {
+            try {
+                const projectsResponse = await axios.get('http://localhost:8000/api/projects/');
+                const ownersResponse = await axios.get('http://localhost:8000/users');
+                setProjects(projectsResponse.data);
+                setOwners(ownersResponse.data);
+            } catch (error) {
+                console.error('Error fetching projects and owners:', error);
+            }
+        };
+
+        fetchProjectsAndOwners();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -87,24 +104,36 @@ const TaskForm = ({ task, onSave, onCancel }) => {
                     <MenuItem value="not started">Not Started</MenuItem>
                 </Select>
             </FormControl>
-            <TextField
-                label="Owner ID"
-                name="owner_id"
-                value={formData.owner_id}
-                onChange={handleChange}
-                required
-                fullWidth
-                margin="normal"
-            />
-            <TextField
-                label="Project ID"
-                name="project_id"
-                value={formData.project_id}
-                onChange={handleChange}
-                required
-                fullWidth
-                margin="normal"
-            />
+            <FormControl fullWidth margin="normal">
+                <InputLabel>Project ID</InputLabel>
+                <Select
+                    name="project_id"
+                    value={formData.project_id}
+                    onChange={handleChange}
+                    required
+                >
+                    {projects.map((project) => (
+                        <MenuItem key={project.project_id} value={project.project_id}>
+                            {project.project_name}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+                <InputLabel>Owner ID</InputLabel>
+                <Select
+                    name="owner_id"
+                    value={formData.owner_id}
+                    onChange={handleChange}
+                    required
+                >
+                    {owners.map((owner) => (
+                        <MenuItem key={owner.user_id} value={owner.user_id}>
+                            {owner.user_name}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
             <Button type="submit" variant="contained" color="primary">
                 Save
             </Button>
