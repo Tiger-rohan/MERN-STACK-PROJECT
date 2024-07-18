@@ -1,4 +1,3 @@
-// controllers/projectController.js
 const Project = require('../models/Project');
 
 // Create a project
@@ -56,4 +55,19 @@ const getProjects = async (req, res) => {
     }
 };
 
-module.exports = { createProject, updateProject, deleteProject, getProjects };
+// Get projects by owner ID
+const getProjectsByOwnerId = async (req, res) => {
+    const { ownerId } = req.params;
+    try {
+        const projects = await Project.find({ owner_id: ownerId });
+        if (projects.length === 0) {
+            return res.status(404).json({ error: 'No projects found for this owner' });
+        }
+        res.json(projects);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error fetching projects by owner ID' });
+    }
+};
+
+module.exports = { createProject, updateProject, deleteProject, getProjects, getProjectsByOwnerId };

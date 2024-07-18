@@ -74,27 +74,30 @@ const loginUser = async (req, res) => {
 };
 
 // Get user profile
-const getProfile = async (req, res) => {
-    const { token } = req.cookies;
-    if (token) {
-        jwt.verify(token, process.env.JWT_SECRET, {}, async (err, decodedToken) => {
-            if (err) {
-                return res.status(401).json({ msg: 'Token is not valid' });
-            }
-            try {
-                const user = await User.findById(decodedToken.id).select('-password'); // Exclude password from the response
-                if (!user) {
-                    return res.status(404).json({ msg: 'User not found' });
-                }
-                res.json(user);
-            } catch (error) {
-                console.error(error.message);
-                res.status(500).send('Server error');
-            }
-        });
-    } else {
-        res.json(null);
-    }
-};
+// const getProfile = async (req, res) => {
+//     const { token } = req.cookies;
 
-module.exports = { test, registerUser, loginUser, getProfile, getUsers };
+//     if (!token) {
+//         return res.status(401).json({ msg: 'No token, authorization denied' });
+//     }
+
+//     try {
+//         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
+//         const user = await User.findById(decodedToken.id).select('-password');
+
+//         if (!user) {
+//             return res.status(404).json({ msg: 'User not found' });
+//         }
+
+//         res.json(user);
+//     } catch (error) {
+//         console.error('Error in getProfile:', error.message);
+//         if (error.name === 'JsonWebTokenError') {
+//             return res.status(401).json({ msg: 'Token is not valid' });
+//         }
+//         res.status(500).send('Server Error');
+//     }
+// };
+
+module.exports = { test, registerUser, loginUser, getUsers };
