@@ -1,29 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-    Container, 
-    TextField, 
-    Button, 
-    Table, 
-    TableBody, 
-    TableCell, 
-    TableContainer, 
-    TableHead, 
-    TableRow, 
-    Paper,
-    Typography,
-    Snackbar,
-    Alert
-} from '@mui/material';
+import { Container, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import ProjectForm from './ProjectForm';
+import ProjectList from './ProjectList';
+import SnackbarAlert from './SnackbarAlert';
 
 const ProjectPage = () => {
     const [projects, setProjects] = useState([]);
-    const [projectName, setProjectName] = useState('');
-    const [projectDescription, setProjectDescription] = useState('');
-    const [ownerId, setOwnerId] = useState('');
     const [selectedProject, setSelectedProject] = useState(null);
     const [error, setError] = useState(null);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
 
     useEffect(() => {
         fetchProjects();
@@ -39,38 +26,26 @@ const ProjectPage = () => {
         }
     };
 
-    const handleCreateProject = async () => {
+    const handleCreateProject = async (project) => {
         try {
-            const response = await axios.post('/api/projects', {
-                project_name: projectName,
-                project_description: projectDescription,
-                owner_id: ownerId
-            });
+            const response = await axios.post('/api/projects', project);
             setProjects([...projects, response.data]);
-            setProjectName('');
-            setProjectDescription('');
-            setOwnerId('');
             setSnackbarOpen(true);
+            setDialogOpen(false);
         } catch (error) {
             console.error('Error creating project', error);
             setError('Error creating project');
         }
     };
 
-    const handleUpdateProject = async () => {
+    const handleUpdateProject = async (project) => {
         if (!selectedProject) return;
         try {
-            const response = await axios.put(`/api/projects/${selectedProject.project_id}`, {
-                project_name: projectName,
-                project_description: projectDescription,
-                owner_id: ownerId
-            });
+            const response = await axios.put(`/api/projects/${selectedProject.project_id}`, project);
             setProjects(projects.map(proj => proj.project_id === selectedProject.project_id ? response.data : proj));
             setSelectedProject(null);
-            setProjectName('');
-            setProjectDescription('');
-            setOwnerId('');
             setSnackbarOpen(true);
+            setDialogOpen(false);
         } catch (error) {
             console.error('Error updating project', error);
             setError('Error updating project');
@@ -90,107 +65,60 @@ const ProjectPage = () => {
 
     const handleSelectProject = (project) => {
         setSelectedProject(project);
-        setProjectName(project.project_name);
-        setProjectDescription(project.project_description);
-        setOwnerId(project.owner_id);
+        setDialogOpen(true);
     };
 
     const handleCloseSnackbar = () => {
         setSnackbarOpen(false);
     };
 
+    const handleOpenDialog = () => {
+        setSelectedProject(null);
+        setDialogOpen(true);
+    };
+
+    const handleCloseDialog = () => {
+        setDialogOpen(false);
+    };
+
     return (
         <Container>
             <h1>Project Page</h1>
             {error && <Typography color="error">{error}</Typography>}
-            <TextField
-                label="Project Name"
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-                fullWidth
-                margin="normal"
-            />
-            <TextField
-                label="Project Description"
-                value={projectDescription}
-                onChange={(e) => setProjectDescription(e.target.value)}
-                fullWidth
-                margin="normal"
-            />
-            <TextField
-                label="Owner ID"
-                value={ownerId}
-                onChange={(e) => setOwnerId(e.target.value)}
-                fullWidth
-                margin="normal"
-            />
             <Button 
                 variant="contained" 
                 color="primary" 
-                onClick={selectedProject ? handleUpdateProject : handleCreateProject}
+                onClick={handleOpenDialog}
+                style={{ marginBottom: '20px' }}
             >
-                {selectedProject ? 'Update Project' : 'Create Project'}
+                Create Project
             </Button>
-            {selectedProject && (
-                <Button 
-                    variant="contained" 
-                    color="secondary" 
-                    onClick={() => {
-                        setSelectedProject(null);
-                        setProjectName('');
-                        setProjectDescription('');
-                        setOwnerId('');
-                    }}
-                >
-                    Cancel
-                </Button>
-            )}
-            <TableContainer component={Paper} style={{ marginTop: '20px' }}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Project Name</TableCell>
-                            <TableCell>Project Description</TableCell>
-                            <TableCell>Owner ID</TableCell>
-                            <TableCell>Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {projects.map(project => (
-                            <TableRow key={project.project_id}>
-                                <TableCell>{project.project_name}</TableCell>
-                                <TableCell>{project.project_description}</TableCell>
-                                <TableCell>{project.owner_id}</TableCell>
-                                <TableCell>
-                                    <Button 
-                                        variant="contained" 
-                                        color="primary" 
-                                        onClick={() => handleSelectProject(project)}
-                                    >
-                                        Edit
-                                    </Button>
-                                    <Button 
-                                        variant="contained" 
-                                        color="secondary" 
-                                        onClick={() => handleDeleteProject(project.project_id)}
-                                    >
-                                        Delete
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            <Snackbar
-                open={snackbarOpen}
-                autoHideDuration={6000}
-                onClose={handleCloseSnackbar}
-            >
-                <Alert onClose={handleCloseSnackbar} severity="success">
-                    Action completed successfully!
-                </Alert>
-            </Snackbar>
+            <ProjectList 
+                projects={projects} 
+                onEdit={handleSelectProject} 
+                onDelete={handleDeleteProject} 
+            />
+            <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+                <DialogTitle>{selectedProject ? 'Update Project' : 'Create Project'}</DialogTitle>
+                <DialogContent>
+                    <ProjectForm 
+                        selectedProject={selectedProject} 
+                        onCreate={handleCreateProject} 
+                        onUpdate={handleUpdateProject} 
+                        onCancel={handleCloseDialog} 
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog} color="primary">
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <SnackbarAlert 
+                open={snackbarOpen} 
+                onClose={handleCloseSnackbar} 
+                message="Action completed successfully!" 
+            />
         </Container>
     );
 };
