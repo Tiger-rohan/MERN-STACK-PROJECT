@@ -11,7 +11,7 @@ router.get('/:id', userDetailsController.getUserDetailsById);
 // Create new user details
 router.post('/', userDetailsController.createUserDetails);
 
-// Update user details by ID
+// Update user details by user ID
 router.put('/:id', userDetailsController.updateUserDetails);
 
 // Delete user details by ID

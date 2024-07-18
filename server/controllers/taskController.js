@@ -1,6 +1,8 @@
 const Task = require('../models/Task');
-const User = require('../models/user'); // Ensure the correct case for the file name
-const Project = require('../models/Project'); // Assuming you have a Project model
+const User = require('../models/User');
+const Project = require('../models/Project');
+const UserDetails = require('../models/UserDetails');
+const mongoose = require('mongoose');
 
 // Create a new task
 const createTask = async (req, res) => {
@@ -27,12 +29,31 @@ const createTask = async (req, res) => {
     });
 
     await task.save();
+
+    // Update the userDetails collection
+    await UserDetails.updateOne(
+      { user_id: owner_id, "ProjectDescription.project_id": project_id },
+      {
+        $push: {
+          "ProjectDescription.$.TaskDescription": {
+            task_id: task.task_id,  // Use task._id here
+            task_description,
+            task_dueDate,
+            task_status,
+            owner_id,
+            project_id
+          }
+        }
+      }
+    );
+
     res.status(201).json(task);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Server error' });
   }
 };
+
 
 // Get all tasks
 const getTasks = async (req, res) => {

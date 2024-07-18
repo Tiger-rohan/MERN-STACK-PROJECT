@@ -1,6 +1,7 @@
+// src/components/Admin/components/CreateTask.jsx
 import React, { useState } from 'react';
-import axios from 'axios';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { createTask } from '../../actions/taskActions';
 
 const CreateTask = () => {
   const [taskDescription, setTaskDescription] = useState('');
@@ -8,30 +9,18 @@ const CreateTask = () => {
   const [taskStatus, setTaskStatus] = useState('not started');
   const [ownerId, setOwnerId] = useState('');
   const [projectId, setProjectId] = useState('');
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const dispatch = useDispatch();
+  const { loading, error, task } = useSelector((state) => state.task);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setError(null);
-    setSuccess(null);
-
-    try {
-      const response = await axios.post('/api/tasks', {
-        task_description: taskDescription,
-        task_dueDate: taskDueDate,
-        task_status: taskStatus,
-        owner_id: ownerId,
-        project_id: projectId,
-      });
-      setSuccess('Task created successfully!');
-      setTaskDescription('');
-      setTaskDueDate('');
-      setOwnerId('');
-      setProjectId('');
-    } catch (err) {
-      setError(err.response?.data?.error || 'Server error');
-    }
+    dispatch(createTask({
+      task_description: taskDescription,
+      task_dueDate: taskDueDate,
+      task_status: taskStatus,
+      owner_id: ownerId,
+      project_id: projectId
+    }));
   };
 
   return (
@@ -83,10 +72,10 @@ const CreateTask = () => {
             required
           />
         </div>
-        <button type="submit">Create Task</button>
+        <button type="submit" disabled={loading}>Create Task</button>
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
+      {task && <p style={{ color: 'green' }}>Task created successfully!</p>}
     </div>
   );
 };

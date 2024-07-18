@@ -42,7 +42,6 @@ const ProjectCreation = () => {
                 toast.error('Failed to update user details.');
             }
 
-            console.log(projectResponse.data);
             setProjectData({ project_name: '', project_description: '', owner_id: '' }); // Reset form
         } catch (error) {
             console.error(error);
