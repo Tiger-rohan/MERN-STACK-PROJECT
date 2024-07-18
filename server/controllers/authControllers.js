@@ -62,6 +62,7 @@ const loginUser = async (req, res) => {
         if (match) {
             jwt.sign({ email: user.email, id: user.user_id, name: user.user_name, role: user.role }, process.env.JWT_SECRET, {}, (err, token) => {
                 if (err) throw err;
+                console.log(token)
                 res.cookie('token', token).json({ ...user.toObject(), password: undefined }); // Exclude password from response
             });
         } else {
