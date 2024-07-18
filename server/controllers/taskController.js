@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Task = require('../models/Task');
 const User = require('../models/user'); // Ensure the correct case for the file name
 const Project = require('../models/Project'); // Assuming you have a Project model
+const moment = require('moment');
 
 // Create a new task
 const createTask = async (req, res) => {
@@ -48,8 +49,8 @@ const createTask = async (req, res) => {
 const getTasks = async (req, res) => {
   try {
     const tasks = await Task.find()
-      .populate('owner_id', 'user_name') // Change 'name' to 'user_name' to match the User model
-      .populate('project_id', 'project_name');
+      
+      // console.log(res);
     res.json(tasks);
   } catch (error) {
     console.log(error);
@@ -66,8 +67,7 @@ const getTaskById = async (req, res) => {
     }
 
     const task = await Task.findOne({ task_id: taskId }) // Adjust to search by task_id
-      .populate('owner_id', 'user_name') // Change 'name' to 'user_name'
-      .populate('project_id', 'project_name');
+;
     if (!task) {
       return res.status(404).json({ error: 'Task not found' });
     }
@@ -81,40 +81,29 @@ const getTaskById = async (req, res) => {
 // Update a task
 const updateTask = async (req, res) => {
   try {
-    const { task_description, task_dueDate, task_status, owner_id, project_id } = req.body;
-
-    // Convert IDs to numbers
-    const ownerId = owner_id ? Number(owner_id) : undefined;
-    const projectId = project_id ? Number(project_id) : undefined;
-
-    // Validate if owner_id and project_id are valid numbers
-    if ((ownerId && isNaN(ownerId)) || (projectId && isNaN(projectId))) {
-      return res.status(400).json({ error: 'Invalid owner ID or project ID' });
-    }
-
-    // Validate if owner_id and project_id exist in their respective collections
-    if (ownerId) {
-      const userExists = await User.findOne({ user_id: ownerId });
-      if (!userExists) {
-        return res.status(400).json({ error: 'Owner not found' });
-      }
-    }
-
-    if (projectId) {
-      const projectExists = await Project.findOne({ project_id: projectId });
-      if (!projectExists) {
-        return res.status(400).json({ error: 'Project not found' });
-      }
-    }
+    const { task_description, task_dueDate, task_status } = req.body;
 
     const taskId = Number(req.params.id);
     if (isNaN(taskId)) {
       return res.status(400).json({ error: 'Invalid task ID' });
     }
 
+    let updatedFields = {
+      task_description,
+      task_status
+    };
+
+    // Validate and update task_dueDate if provided and valid
+    if (task_dueDate) {
+      if (!moment(task_dueDate, 'YYYY-MM-DD', true).isValid()) {
+        return res.status(400).json({ error: 'Invalid date format for task_dueDate. Use YYYY-MM-DD format.' });
+      }
+      updatedFields.task_dueDate = moment(task_dueDate).toDate();
+    }
+
     const task = await Task.findOneAndUpdate(
       { task_id: taskId }, // Adjust to search by task_id
-      { task_description, task_dueDate, task_status, owner_id: ownerId, project_id: projectId },
+      updatedFields,
       { new: true, runValidators: true }
     );
 
@@ -128,6 +117,8 @@ const updateTask = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
+
 
 // Delete a task
 const deleteTask = async (req, res) => {
