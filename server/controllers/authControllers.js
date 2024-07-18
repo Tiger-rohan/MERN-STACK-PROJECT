@@ -60,11 +60,27 @@ const loginUser = async (req, res) => {
 
         const match = await comparePassword(password, user.password);
         if (match) {
-            jwt.sign({ email: user.email, id: user.user_id, name: user.user_name, role: user.role }, process.env.JWT_SECRET, {}, (err, token) => {
-                if (err) throw err;
-                console.log(token)
-                res.cookie('token', token).json({ ...user.toObject(), password: undefined }); // Exclude password from response
-            });
+            // jwt.sign({ email: user.email, id: user.user_id, name: user.user_name, role: user.role }, process.env.JWT_SECRET, {}, (err, token) => {
+            //     if (err) throw err;
+            //     console.log(token)
+            //     res.cookie('token', token).json({ ...user.toObject(), password: undefined }); // Exclude password from response
+            // });
+            jwt.sign(
+                { email: user.email, id: user.user_id, name: user.user_name, role: user.role },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' },
+                (err, token) => {
+                  if (err) throw err;
+
+                  console.log(token)
+                  res.json({ token,
+                    email: user.email,
+                    user_id: user.user_id,
+                    name: user.user_name,
+                    role: user.role
+                 });
+                }
+              );
         } else {
             res.json({ error: "Wrong Password" });
         }

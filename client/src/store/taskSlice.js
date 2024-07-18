@@ -1,9 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { fetchUserTasks } from '../actions/taskActions';
 
 const taskSlice = createSlice({
   name: 'task',
   initialState: {
     tasks: [],
+    status: 'idle',
+    error: null,
   },
   reducers: {
     setTasks(state, action) {
@@ -19,6 +22,20 @@ const taskSlice = createSlice({
     deleteTask(state, action) {
       state.tasks = state.tasks.filter(t => t._id !== action.payload);
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUserTasks.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchUserTasks.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.tasks = action.payload;
+      })
+      .addCase(fetchUserTasks.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      });
   },
 });
 
