@@ -83,7 +83,9 @@ const ProjectPage = () => {
 
     return (
         <Container>
-            <h1>Project Page</h1>
+             <Typography variant="h4" gutterBottom>
+                Project Manager
+            </Typography>
             {error && <Typography color="error">{error}</Typography>}
             <Button 
                 variant="contained" 
