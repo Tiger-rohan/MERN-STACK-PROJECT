@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ProjectCreation from "./components/ProjectCreation";
 import CreateTask from "./components/Tasks/CreateTasks";
 import { Container, Typography, Button, Grid } from '@mui/material';
+import ProjectPage from "./components/Project/ProjectPage";
 
 
 function Admin() {
@@ -39,7 +40,9 @@ function Admin() {
             >
                 Logout
             </Button>
+            <ProjectPage></ProjectPage>
         </Container>
+        
     );
 };
 

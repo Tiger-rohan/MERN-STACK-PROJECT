@@ -13,7 +13,7 @@ router.get('/',test);
 router.get('/fetchAllUsers',fetchAllUsers);
 router.post('/register',registerUser);
 router.post('/login',loginUser);
-router.get('/profile',getProfile);
-router.get('/register', getUsers);
+// router.get('/profile',getProfile);
+router.get('/users', getUsers);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 // routes/projectRoutes.js
 const express = require('express');
 const router = express.Router();
-const { createProject, updateProject, deleteProject, getProjects } = require('../controllers/projectController');
+const { createProject, updateProject, deleteProject, getProjects , getProjectsByOwnerId} = require('../controllers/projectController');
 
 // Create a new project
 router.post('/', createProject);
@@ -14,5 +14,7 @@ router.delete('/:projectId', deleteProject);
 
 // Get all projects
 router.get('/', getProjects);
+
+router.get('/owner/:ownerId', getProjectsByOwnerId);
 
 module.exports = router;
