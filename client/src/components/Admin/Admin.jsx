@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import ProjectCreation from "./components/ProjectCreation";
+
 import CreateTask from "./components/Tasks/CreateTasks";
 import { Container, Typography, Button, Grid } from '@mui/material';
 import ProjectPage from "./components/Project/ProjectPage";
@@ -25,7 +25,7 @@ function Admin() {
 
             <Grid container spacing={4}>
                 <Grid item xs={12} md={6}>
-                    <ProjectCreation />
+                    
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <CreateTask />
