@@ -68,7 +68,6 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
-import './pages.css';
 import { loginUser } from '../actions/authAction';
 
 export default function Login() {
@@ -87,8 +86,6 @@ export default function Login() {
                 navigate('/admin');
             } else if (user.role === 'user') {
                 navigate('/user');
-            } else {
-                navigate('/dashboard');
             }
         }
 
