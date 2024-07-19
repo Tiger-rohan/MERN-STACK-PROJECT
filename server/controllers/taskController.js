@@ -58,12 +58,31 @@ const createTask = async (req, res) => {
       }
     );
 
+
+    // Update the userDetails collection
+    await UserDetails.updateOne(
+      { user_id: owner_id, "ProjectDescription.project_id": project_id },
+      {
+        $push: {
+          "ProjectDescription.$.TaskDescription": {
+            task_id: task.task_id,  // Use task._id here
+            task_description,
+            task_dueDate,
+            task_status,
+            owner_id,
+            project_id
+          }
+        }
+      }
+    );
+
     res.status(201).json(task);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Server error' });
   }
 };
+
 
 
 // Get all tasks
