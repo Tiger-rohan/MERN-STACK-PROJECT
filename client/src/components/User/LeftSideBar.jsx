@@ -7,7 +7,7 @@ const LeftSideBar = ({ onSelectProject }) => {
 
   return (
     <div>
-      <h2>Project's Onwed</h2>
+      <h2>Project's Owned</h2>
       <List>
         {projects.map(project => (
           <ListItem button key={project.project_id} onClick={() => onSelectProject(project.project_id)}>
