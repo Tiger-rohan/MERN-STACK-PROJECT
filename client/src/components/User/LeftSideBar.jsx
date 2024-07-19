@@ -1,13 +1,13 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { List, ListItem, ListItemText } from '@mui/material';
+import { List, ListItem, ListItemText,Typography } from '@mui/material';
 
 const LeftSideBar = ({ onSelectProject }) => {
   const { projects } = useSelector(state => state.project);
 
   return (
     <div>
-      <h2>Project's Owned</h2>
+      <Typography variant="h5">Project's Owned</Typography>
       <List>
         {projects.map(project => (
           <ListItem button key={project.project_id} onClick={() => onSelectProject(project.project_id)}>

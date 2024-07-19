@@ -20,7 +20,7 @@ const MainBar = ({ selectedProjectId }) => {
 
   return (
     <div>
-      <Typography variant="h2" onClick={handleHeaderClick} style={{ cursor: 'pointer' }}>
+      <Typography variant="h5" onClick={handleHeaderClick} style={{ cursor: 'pointer' }}>
         Tasks
       </Typography>
       <List>
