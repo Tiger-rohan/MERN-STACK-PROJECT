@@ -7,6 +7,7 @@ const app = express();
 const projectRoutes = require('./routes/projectRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const userDetails = require('./routes/userDetailsRoutes');
+const authRoutes = require('./routes/authRoutes')
 
 dotenv.config({path: './config.env'})
 
@@ -19,7 +20,7 @@ app.use(express.json())
 app.use(cookieParser());
 app.use(express.urlencoded({extended:false}))
 
-app.use('/' , require('./routes/authRoutes'))
+app.use('/' , authRoutes)
 app.use('/api/projects', projectRoutes);
 
 //task

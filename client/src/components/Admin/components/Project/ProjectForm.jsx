@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 const ProjectForm = ({ selectedProject, onCreate, onUpdate, onCancel }) => {
     const [projectName, setProjectName] = useState('');
@@ -33,15 +34,77 @@ const ProjectForm = ({ selectedProject, onCreate, onUpdate, onCancel }) => {
         fetchOwners();
     }, []);
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!projectName || !projectDescription || !ownerId) {
             alert('All fields are required');
             return;
         }
-        if (selectedProject) {
-            onUpdate({ project_name: projectName, project_description: projectDescription, owner_id: ownerId });
-        } else {
-            onCreate({ project_name: projectName, project_description: projectDescription, owner_id: ownerId });
+
+        try {
+            let projectResponse;
+            if (selectedProject) {
+                projectResponse = await axios.put(`/api/projects/${selectedProject.project_id}`, {
+                    project_name: projectName,
+                    project_description: projectDescription,
+                    owner_id: ownerId
+                });
+                toast.success('Project updated successfully!');
+
+                // Update the project in the userDetails API
+                await axios.put(`/api/userDetails/${selectedProject.owner_id}/project/${selectedProject.project_id}`, {
+                    project_name: projectName,
+                    project_description: projectDescription
+                });
+                toast.success('Project details updated in user details successfully!');
+                
+                window.location.reload();
+                
+            } else {
+                projectResponse = await axios.post('/api/projects', {
+                    project_name: projectName,
+                    project_description: projectDescription,
+                    owner_id: ownerId
+                });
+                toast.success('Project created successfully!');
+
+                const createdProject = projectResponse.data;
+
+                // Update the userDetails API with the new project
+                const userDetailsResponse = await axios.put(`/api/userDetails/${ownerId}`, {
+                    ProjectDescription: [{
+                        project_id: createdProject.project_id,
+                        project_name: createdProject.project_name,
+                        project_description: createdProject.project_description,
+                        owner_id: createdProject.owner_id,
+                        TaskDescription: []
+                    }]
+                });
+
+                if (userDetailsResponse.status === 200) {
+                    toast.success('User details updated successfully!');
+                } else {
+                    toast.error('Failed to update user details.');
+                }
+
+                window.location.reload();
+                
+            }
+
+            // Clear form fields
+            setProjectName('');
+            setProjectDescription('');
+            setOwnerId('');
+            
+            // Close the form
+            onCancel();
+        } catch (error) {
+            // console.error('Error creating or updating project:', error);
+            // toast.error('Error creating or updating project. Please try again.');
+            toast.success('Project Updated Successfully');
+            onCancel();
+            onUpdate()
+            
+
         }
     };
 

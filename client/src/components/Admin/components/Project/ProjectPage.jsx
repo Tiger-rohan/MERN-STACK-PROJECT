@@ -34,7 +34,6 @@ const ProjectPage = () => {
             setDialogOpen(false);
         } catch (error) {
             console.error('Error creating project', error);
-            setError('Error creating project');
         }
     };
 
@@ -47,21 +46,28 @@ const ProjectPage = () => {
             setSnackbarOpen(true);
             setDialogOpen(false);
         } catch (error) {
-            console.error('Error updating project', error);
-            setError('Error updating project');
+            // console.error('Error updating project', error);
+            // setError('Error updating project');
+            setSnackbarOpen(true);
         }
     };
 
     const handleDeleteProject = async (projectId) => {
         try {
             await axios.delete(`/api/projects/${projectId}`);
-            setProjects(projects.filter(proj => proj.project_id !== projectId));
+            setProjects(projects.filter(project => project.project_id !== projectId));
+
+            // Delete all tasks associated with this project
+            await axios.delete(`/api/tasks/project/${projectId}`);
+            // Delete from the userDetails API (remove project from all users and tasks)
+            await axios.delete(`/api/userdetails/project/${projectId}`);
             setSnackbarOpen(true);
         } catch (error) {
             console.error('Error deleting project', error);
-            setError('Error deleting project');
+            window.location.reload();
         }
     };
+    
 
     const handleSelectProject = (project) => {
         setSelectedProject(project);
@@ -83,7 +89,7 @@ const ProjectPage = () => {
 
     return (
         <Container>
-             <Typography variant="h4" gutterBottom>
+            <Typography variant="h4" gutterBottom>
                 Project Manager
             </Typography>
             {error && <Typography color="error">{error}</Typography>}

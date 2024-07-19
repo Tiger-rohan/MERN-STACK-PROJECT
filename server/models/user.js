@@ -11,14 +11,6 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    user_id: {
-        type: Number, // Ensure user_id is of type Number
-        unique: true
-    },
-    user_name: {
-        type: String,
-        required: true
-    },
     email: {
         type: String,
         required: true,

@@ -1,40 +1,41 @@
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
-import { loginUser } from '../actions/authAction';
 import { Box, Button, TextField, Typography, Container, Paper } from '@mui/material';
 import { motion } from 'framer-motion';
+import axios from 'axios';
 
 export default function Login() {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const { isAuthenticated, error, user } = useSelector(state => state.user);
 
     const [data, setData] = useState({
         email: "",
         password: "",
     });
 
-    useEffect(() => {
-        if (isAuthenticated) {
-            if (user.role === 'admin') {
-                navigate('/admin');
-            } else if (user.role === 'user') {
-                navigate('/user');
-            } else {
-                navigate('/dashboard');
-            }
-        }
-
-        if (error) {
-            toast.error(error);
-        }
-    }, [isAuthenticated, error, user, navigate]);
-
-    const login = (e) => {
+    const loginUser = async (e) => {
         e.preventDefault();
-        dispatch(loginUser(data));
+        const { email, password } = data;
+        try {
+            const { data: responseData } = await axios.post('/login', { email, password });
+            if (responseData.error) {
+                toast.error(responseData.error);
+            } else {
+                // Check user role and navigate accordingly
+                const { role } = responseData; // Assuming responseData contains the user object with role
+                setData({});
+                if (role === 'admin') {
+                    navigate('/admin');
+                } else if (role === 'user') {
+                    navigate('/user');
+                } else {
+                    navigate('/dashboard'); // Fallback if role is unrecognized
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error("An error occurred. Please try again.");
+        }
     };
 
     return (
@@ -48,7 +49,7 @@ export default function Login() {
                     <Typography variant="h4" component="h1" gutterBottom>
                         Login
                     </Typography>
-                    <form onSubmit={login}>
+                    <form onSubmit={loginUser}>
                         <TextField
                             label="Email"
                             type="email"

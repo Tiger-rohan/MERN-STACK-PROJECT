@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
-const { createTask, getTasks, getTaskById, updateTask, deleteTask , getTasksByOwnerId} = require('../controllers/taskController');
+const { createTask, getTasks, getTaskById, updateTask, deleteTask, getTasksByOwnerId, deleteTasksByProjectId } = require('../controllers/taskController');
 
 router.use(cors({
     credentials: true,
@@ -15,5 +15,6 @@ router.get('/tasks/:id', getTaskById);
 router.put('/tasks/:id', updateTask);
 router.delete('/tasks/:id', deleteTask);
 router.get('/tasks/owner/:ownerId', getTasksByOwnerId);
+router.delete('/tasks/project/:projectId', deleteTasksByProjectId);
 
 module.exports = router;
