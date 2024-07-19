@@ -1,55 +1,17 @@
-
-// import React, { useEffect } from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { fetchUserProjects } from '../../actions/UserProjectActions';
-// import { fetchUserTasks } from '../../actions/taskActions';
-
-// const ProjectList = () => {
-//   const dispatch = useDispatch();
-//   const { user } = useSelector(state => state.user);
-//   const userId = user?.user_id
-//   const { projects, status, error } = useSelector(state => state.project);
-
-//   console.log(tasks)
-//   useEffect(() => {
-//     if (userId) {
-//       dispatch(fetchUserTasks(userId));
-//       dispatch(fetchUserProjects(userId));
-//     }
-//   }, [userId, dispatch]);
-
-
-//   if (status === 'loading') {
-//     return <div>Loading...</div>;
-//   }
-
-//   if (status === 'failed') {
-//     return <div>Error: {error}</div>;
-//   }
-
-//   return (
-//     <div>
-//       <h1>Projects</h1>
-//       <ul>
-//         {projects.map(project => (
-//           <li key={project.project_id}>{project.project_name}</li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// };
-
-// export default ProjectList;
-
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserProjects } from '../../actions/UserProjectActions';
 import { fetchUserTasks } from '../../actions/taskActions';
 import LeftSideBar from './LeftSideBar';
 import MainBar from './Mainbar';
-import { Grid, Container } from '@mui/material';
+import { Container, Typography, Grid, Paper, AppBar, Toolbar, Button, Box, CssBaseline } from '@mui/material';
+import { logout } from '../../store/userSlice';
+import { useNavigate } from 'react-router-dom';
+
+
 const User = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useSelector(state => state.user);
   const userId = user?.user_id;
 
@@ -66,19 +28,35 @@ const User = () => {
     setSelectedProjectId(projectId);
   };
 
+
+
   return (
-    <Container>
-      <Grid container spacing={2}>
-        <Grid item xs={3}>
-          <LeftSideBar onSelectProject={handleSelectProject} />
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <CssBaseline />
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            {user?.name ? `${user.name}'s Dashboard` : 'User Dashboard'}
+          </Typography>
+          {/* <Button color="inherit" onClick={handleLogout}>Logout</Button> */}
+        </Toolbar>
+      </AppBar>
+      <Box sx={{ display: 'flex', flexGrow: 1, p: 2 }}>
+        <Grid container spacing={2} sx={{ flexGrow: 1 }}>
+          <Grid item xs={12} md={3}>
+            <Paper sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 2 }}>
+              <LeftSideBar onSelectProject={handleSelectProject} />
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={9}>
+            <Paper sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 2 }}>
+              <MainBar selectedProjectId={selectedProjectId} />
+            </Paper>
+          </Grid>
         </Grid>
-        <Grid item xs={9}>
-          <MainBar selectedProjectId={selectedProjectId} />
-        </Grid>
-      </Grid>
-    </Container>
+      </Box>
+    </Box>
   );
 };
 
 export default User;
-
