@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const AutoIncrement = require('mongoose-sequence')(mongoose); // Make sure to install mongoose-sequence
-const { Schema } = mongoose;
-const AutoIncrement = require('mongoose-sequence')(mongoose); // Make sure to install mongoose-sequence
 
 const userSchema = new Schema({
     user_id: {

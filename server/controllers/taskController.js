@@ -69,8 +69,6 @@ const createTask = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Server error' });
-    console.log(error);
-    res.status(500).json({ error: 'Server error' });
   }
 };
 
@@ -81,9 +79,6 @@ const getTasks = async (req, res) => {
     const tasks = await Task.find()
       
       // console.log(res);
-    const tasks = await Task.find()
-      
-      // console.log(res);
     res.json(tasks);
   } catch (error) {
     console.log(error);
@@ -91,27 +86,6 @@ const getTasks = async (req, res) => {
   }
 };
 
-// Get a task by ID
-const getTaskById = async (req, res) => {
-  try {
-    const taskId = Number(req.params.id);
-    if (isNaN(taskId)) {
-      return res.status(400).json({ error: 'Invalid task ID' });
-    }
-
-    const task = await Task.findOne({ task_id: taskId }) // Adjust to search by task_id
-;
-    if (!task) {
-      return res.status(404).json({ error: 'Task not found' });
-    }
-    res.json(task);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'Server error' });
-    console.log(error);
-    res.status(500).json({ error: 'Server error' });
-  }
-};
 
 // Get a task by ID
 const getTaskById = async (req, res) => {
@@ -133,7 +107,6 @@ const getTaskById = async (req, res) => {
   }
 };
 
-// Update a task
 // Update a task
 const updateTask = async (req, res) => {
   try {
@@ -202,14 +175,13 @@ const updateTask = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Server error' });
-    console.log(error);
-    res.status(500).json({ error: 'Server error' });
   }
+}
+catch (error) {
+  console.log(error);
+  res.status(500).json({ error: 'Server error' });
+}
 };
-
-
-
-// Delete a task
 
 
 // Delete a task
@@ -259,28 +231,13 @@ const getTasksByOwnerId = async (req, res) => {
     console.log(error);
     res.status(500).json({ error: 'Server error' });
   }
+}
+catch(err){
+  console.log(err);
+  res.status(500).json({err: "Server Error"})
+}
 };
 
-// Get tasks by owner ID
-const getTasksByOwnerId = async (req, res) => {
-  const ownerId = Number(req.params.ownerId);
-  try {
-    if (isNaN(ownerId)) {
-      return res.status(400).json({ error: 'Invalid owner ID' });
-    }
-
-    const tasks = await Task.find({ owner_id: ownerId });
-    if (tasks.length === 0) {
-      return res.status(404).json({ error: 'No tasks found for this owner' });
-    }
-    res.json(tasks);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: 'Server error' });
-    console.log(error);
-    res.status(500).json({ error: 'Server error' });
-  }
-};
 
 module.exports = {
   getTasksByOwnerId,
@@ -289,12 +246,5 @@ module.exports = {
   getTaskById,
   updateTask,
   deleteTask
-};
-module.exports = {
-  getTasksByOwnerId,
-  createTask,
-  getTasks,
-  getTaskById,
-  updateTask,
-  deleteTask
-};
+}
+
