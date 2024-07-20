@@ -54,6 +54,50 @@ const EditTask = ({ task, onClose, onSave }) => {
             toast.error('Error updating task. Please try again.');
         }
     };
+        // const handleSubmit = async (e) => {
+        //     e.preventDefault();
+    
+        //     try {
+        //         if (task.owner_id !== ownerId || task.project_id !== projectId) {
+        //             // Delete the current task from both APIs
+        //             await axios.delete(`/api/userDetails/${task.owner_id}/project/${task.project_id}/task/${task.task_id}`);
+    
+        //             // Create a new task with the updated details
+        //             const newTask = {
+        //                 task_description: taskDescription,
+        //                 task_dueDate: taskDueDate,
+        //                 task_status: taskStatus,
+        //                 owner_id: ownerId,
+        //                 project_id: projectId,
+        //             };
+    
+        //             // Create the new task in both APIs
+        //             await axios.post(`/api/userDetails/${ownerId}/project/${projectId}/task`, newTask);
+        //         } else {
+                        
+        //             // Update the task in the userDetails API
+        //             await axios.put(`/api/userDetails/${ownerId}/project/${projectId}/task/${task.task_id}`, {
+        //                 task_description: taskDescription,
+        //                 task_dueDate: taskDueDate,
+        //                 task_status: taskStatus,
+        //             });
+    
+        //         }
+
+        //         await axios.put(`/api/tasks/${task.task_id}`, {
+        //             task_description: taskDescription,
+        //             task_dueDate: taskDueDate,
+        //             task_status: taskStatus,
+        //         });
+
+        //         toast.success('Task updated successfully');
+        //         onSave(); // Refresh the task list
+        //         onClose(); // Close the dialog
+        //     } catch (error) {
+        //         console.error('Error updating task:', error);
+        //         toast.error('Error updating task. Please try again.');
+        //     }
+        // };
 
     return (
         <form onSubmit={handleSubmit}>
