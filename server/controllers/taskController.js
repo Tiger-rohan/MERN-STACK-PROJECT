@@ -40,22 +40,55 @@ const createTask = async (req, res) => {
 
     await task.save();
 
-    // Update the userDetails collection
-    await UserDetails.updateOne(
-      { user_id: owner_id, "ProjectDescription.project_id": project_id },
-      {
-        $push: {
-          "ProjectDescription.$.TaskDescription": {
-            task_id: task.task_id,  // Use task._id here
-            task_description,
-            task_dueDate,
-            task_status,
-            owner_id,
-            project_id
+    // Check if the project exists for the user in UserDetails collection
+    const userDetails = await UserDetails.findOne({ user_id: ownerId, "ProjectDescription.project_id": projectId });
+
+    if (userDetails) {
+      // Project exists for the user, update the existing project
+      await UserDetails.updateOne(
+        { user_id: ownerId, "ProjectDescription.project_id": projectId },
+        {
+          $push: {
+            "ProjectDescription.$.TaskDescription": {
+              task_id: task.task_id,  // Use task._id here
+              task_description,
+              task_dueDate,
+              task_status,
+              owner_id: ownerId,
+              project_id: projectId
+            }
           }
         }
-      }
-    );
+      );
+    } else {
+      // Project does not exist for the user, create a new project for the user
+      const projectDetails = await Project.findOne({ project_id: projectId });
+
+      await UserDetails.updateOne(
+        { user_id: ownerId },
+        {
+          $push: {
+            ProjectDescription: {
+              project_id: projectId,
+              project_name: projectDetails.project_name,
+              project_description: projectDetails.project_description,
+              owner_id: ownerId,
+              TaskDescription: [
+                {
+                  task_id: task.task_id,  // Use task._id here
+                  task_description,
+                  task_dueDate,
+                  task_status,
+                  owner_id: ownerId,
+                  project_id: projectId
+                }
+              ]
+            }
+          }
+        },
+        { upsert: true }
+      );
+    }
 
     res.status(201).json(task);
   } catch (error) {
@@ -63,6 +96,7 @@ const createTask = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
 
 // Get all tasks
 const getTasks = async (req, res) => {
