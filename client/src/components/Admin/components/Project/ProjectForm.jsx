@@ -121,6 +121,7 @@ const ProjectForm = ({ selectedProject, onCreate, onUpdate, onCancel }) => {
 
     return (
         <div>
+            <h2>{selectedProject ? 'Update Project' : 'Create Project'}</h2>
             <TextField
                 label="Project Name"
                 value={projectName}

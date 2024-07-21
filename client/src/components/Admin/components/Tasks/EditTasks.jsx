@@ -102,7 +102,7 @@ const EditTask = ({ task, onClose, onSave }) => {
     
     return (
         <form onSubmit={handleSubmit}>
-            <Typography variant="h6">Edit Task</Typography>
+            <h2>Edit Task</h2>
             <TextField
                 label="Description"
                 value={taskDescription}

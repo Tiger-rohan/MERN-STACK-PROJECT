@@ -2,10 +2,17 @@ import React from "react";
 import { Container, Typography, Grid, Paper } from '@mui/material';
 import TaskManager from "./components/Tasks/TaskManager";
 import ProjectPage from "./components/Project/ProjectPage";
+import { motion } from 'framer-motion';
+
 
 function Admin() {
     return (
         <Container>
+            <motion.div
+                initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
             <Typography variant="h3" gutterBottom align="center">
                 Admin Dashboard
             </Typography>
@@ -26,6 +33,7 @@ function Admin() {
                     </Paper>
                 </Grid>
             </Grid>
+            </motion.div>
         </Container>
     );
 }

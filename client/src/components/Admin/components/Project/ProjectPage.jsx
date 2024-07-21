@@ -107,7 +107,7 @@ const ProjectPage = () => {
                 onDelete={handleDeleteProject} 
             />
             <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-                <DialogTitle>{selectedProject ? 'Update Project' : 'Create Project'}</DialogTitle>
+                {/* <DialogTitle>{selectedProject ? 'Update Project' : 'Create Project'}</DialogTitle> */}
                 <DialogContent>
                     <ProjectForm 
                         selectedProject={selectedProject} 

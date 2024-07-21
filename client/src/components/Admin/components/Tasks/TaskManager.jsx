@@ -81,7 +81,6 @@ const TaskManager = () => {
                 <TaskList tasks={tasks} onEdit={handleEdit} onDelete={(taskId, ownerId) => handleDelete(taskId, ownerId)} />
             </TableContainer>
             <Dialog open={dialogOpen} onClose={handleCancel}>
-                <DialogTitle>{selectedTask ? 'Edit Task' : 'Create Task'}</DialogTitle>
                 <DialogContent>
                     {selectedTask ? (
                         <EditTask task={selectedTask} onClose={handleCancel} onSave={handleSave} />
