@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { List, ListItem, ListItemText, Typography } from '@mui/material';
 
-const MainBar = ({ selectedProjectId }) => {
-  const { tasks } = useSelector(state => state.task);
+const MainBar = ({ selectedProjectId, userId }) => {
+  const { tasks } = useSelector(state => state.userDetails);
   const [showAllTasks, setShowAllTasks] = useState(false);
 
   useEffect(() => {

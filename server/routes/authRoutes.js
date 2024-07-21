@@ -14,7 +14,6 @@ router.get('/', test);
 router.get('/fetchAllUsers', fetchAllUsers);
 router.post('/register', registerUser);
 router.post('/login', loginUser);
-// router.get('/profile', getProfile);
 router.get('/users', getUsers); // Ensure this line uses a defined function
 
 module.exports = router;

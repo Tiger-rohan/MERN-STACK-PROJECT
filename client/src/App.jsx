@@ -1,56 +1,43 @@
-import './App.css';
-import { Routes, Route } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import {thunk} from 'redux-thunk'; // Remove the curly braces
-import { Toaster } from 'react-hot-toast';
 
-import rootReducer from './store/rootReducer'; // Adjust the path as necessary
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Admin from './components/Admin/Admin';
-import User from './components/User/User';
-import ProjectCreation from './components/Admin/components/ProjectCreation'; // Adjust the path as necessary
-import CreateTask from './components/Admin/components/Tasks/CreateTasks' // Ensure to import CreateTask
+import {Routes, Route} from 'react-router-dom'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import axios from 'axios'
+import {Toaster} from 'react-hot-toast'
+// import {UserContextProvider} from '../context/userContext'
+import Admin from './components/Admin/Admin'
+import User from './components/User/User'
 
-// import Navbar from '../src/components/Navbar';
-
-import axios from 'axios';
-import { UserContextProvider } from '../context/userContext';
 import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser } from '../src/actions/authAction';
+
 
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;
 
-const store = createStore(rootReducer, applyMiddleware(thunk));
-
 function App() {
-  useEffect(() => {
-    document.body.style.backgroundColor = '#28282B';
-    document.body.style.color = 'white'; // Optional: to make text readable
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector(state => state.user);
 
-    // Cleanup function to reset the background color when the component unmounts
-    return () => {
-      document.body.style.backgroundColor = '';
-      document.body.style.color = '';
-    };
-  }, []);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token && !isAuthenticated) {
+      dispatch(loginUser({ token }));
+    }
+  }, [dispatch, isAuthenticated]);
 
   return (
-    <><Provider store={store}>
-      <UserContextProvider>
-        <Toaster position='bottom-right' toastOptions={{ duration: 2000 }} />
-        <Routes>
-          <Route path='/' element={<Login />} />
-          <Route path='/register' element={<Register />} />
-          <Route path='/admin' element={<Admin />} />
-          <Route path='/user' element={<User />} />
-          <Route path='/project-creation' element={<ProjectCreation />} />
-          <Route path='/create-task' element={<CreateTask />} /> {/* Add CreateTask route */}
-        </Routes>
-      </UserContextProvider>
-    </Provider></>
-
+    <div>
+      <Toaster position='bottom-right' toastOptions={{ duration: 2000 }} />
+      <Routes>
+        <Route path='/' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+        <Route path='/admin' element={<Admin />} />
+        <Route path='/user' element={<User />} />
+      </Routes>
+    </div>
   );
 }
+
 export default App;

@@ -303,3 +303,48 @@ exports.deleteProjectByUserIdAndProjectId = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+
+// Fetch all projects for a specific user by user ID
+exports.getProjectsByUserId = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const userDetails = await UserDetails.findOne({ user_id: userId });
+
+    if (!userDetails) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const projects = userDetails.ProjectDescription;
+    res.status(200).json(projects);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error });
+  }
+};
+
+// Fetch all tasks for a specific project assigned to a user by user ID and project ID
+exports.getTasksByUserIdAndProjectId = async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const projectId = req.params.projectId;
+      const userDetails = await UserDetails.findOne({ user_id: userId });
+  
+      if (!userDetails) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      const project = userDetails.ProjectDescription.find(
+        (proj) => proj.project_id === Number(projectId)
+      );
+  
+      if (!project) {
+        return res.status(404).json({ message: 'Project not found' });
+      }
+  
+      const tasks = project.TaskDescription;
+      res.status(200).json(tasks);
+    } catch (error) {
+      res.status(500).json({ message: 'Server Error', error });
+    }
+  };
+  
