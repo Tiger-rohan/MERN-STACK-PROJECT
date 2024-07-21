@@ -17,8 +17,9 @@ router.post('/', userDetailsController.createUserDetails);
 // Update user details by user ID
 router.put('/:id', userDetailsController.updateUserDetails);
 
-// Update project by user ID and project ID
-router.put('/:userId/project/:projectId', userDetailsController.updateProjectById);
+// Update project by project ID
+router.put('/project/:projectId', userDetailsController.updateProjectById);
+
 
 // Update task by user ID, project ID, and task ID
 router.put('/:userId/project/:projectId/task/:taskId', userDetailsController.updateTaskById);

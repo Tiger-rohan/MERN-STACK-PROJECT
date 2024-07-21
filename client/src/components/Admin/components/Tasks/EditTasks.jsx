@@ -1,4 +1,3 @@
-// src/components/EditTask.jsx
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, MenuItem, Select, InputLabel, FormControl, Typography } from '@mui/material';
 import axios from 'axios';
@@ -14,91 +13,91 @@ const EditTask = ({ task, onClose, onSave }) => {
     const [owners, setOwners] = useState([]);
 
     useEffect(() => {
-        const fetchProjectsAndOwners = async () => {
-            try {
-                const projectsResponse = await axios.get('http://localhost:8000/api/projects/');
-                const ownersResponse = await axios.get('http://localhost:8000/users');
-                setProjects(projectsResponse.data);
-                setOwners(ownersResponse.data);
-            } catch (error) {
-                console.error('Error fetching projects and owners:', error);
-            }
-        };
-
-        fetchProjectsAndOwners();
-    }, []);
-
+                const fetchProjectsAndOwners = async () => {
+                    try {
+                        const projectsResponse = await axios.get('http://localhost:8000/api/projects/');
+                        const ownersResponse = await axios.get('http://localhost:8000/users');
+                        setProjects(projectsResponse.data);
+                        setOwners(ownersResponse.data);
+                    } catch (error) {
+                        console.error('Error fetching projects and owners:', error);
+                    }
+                };
+        
+                fetchProjectsAndOwners();
+            }, []);
+        
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         try {
-            // Update the task in the tasks API
-            await axios.put(`/api/tasks/${task.task_id}`, {
+            // Determine the endpoint to use
+            let apiUrl;
+            let requestData = {
                 task_description: taskDescription,
                 task_dueDate: taskDueDate,
                 task_status: taskStatus,
-            });
-
-            // Update the task in the userDetails API
-            await axios.put(`/api/userDetails/${ownerId}/project/${projectId}/task/${task.task_id}`, {
-                task_description: taskDescription,
-                task_dueDate: taskDueDate,
-                task_status: taskStatus,
-            });
-
+            };
+    
+            // If owner_id or project_id has changed, use the update endpoint
+            if (ownerId !== task.owner_id || projectId !== task.project_id) {
+                try {
+                    // Create the task
+                    await axios.post('/api/tasks', {
+                        task_description: taskDescription,
+                        task_dueDate: taskDueDate,
+                        task_status: taskStatus,
+                        owner_id: ownerId,
+                        project_id: projectId,
+                    });
+    
+                    // Task Deletion from the previous owner
+                    const { data: projects } = await axios.get(`/api/userDetails/${task.owner_id}/projects`);
+    
+                    let previousProjectId;
+                    for (const project of projects) {
+                        if (project.TaskDescription.some(existingTask => existingTask.task_id === task.task_id)) {
+                            previousProjectId = project.project_id;
+                            break;
+                        }
+                    }
+    
+                    if (!previousProjectId) {
+                        throw new Error('Project containing the task not found');
+                    }
+    
+                    await axios.delete(`/api/tasks/${task.task_id}`);
+                    await axios.delete(`/api/userDetails/${task.owner_id}/project/${previousProjectId}/task/${task.task_id}`);
+    
+                    toast.success('Task updated successfully');
+                    fetchTasks();
+    
+                } catch (error) {
+                    console.error('Error updating task:', error);
+                    // toast.error('Error updating task. Please try again.');
+                    toast.success('Task updated successfully');
+                    fetchTasks();
+                }
+            } else {
+                apiUrl = `/api/userDetails/${task.owner_id}/project/${task.project_id}/task/${task.task_id}`;
+            }
+    
+            // Update the task in the appropriate API
+            await axios.put(apiUrl, requestData);
+    
+            // Also update the task in the tasks API
+            await axios.put(`/api/tasks/${task.task_id}`, requestData);
+    
             toast.success('Task updated successfully');
             onSave(); // Refresh the task list
             onClose(); // Close the dialog
         } catch (error) {
             console.error('Error updating task:', error);
-            toast.error('Error updating task. Please try again.');
-        }
+            toast.error('Error updating task. Please try again.');    
+
     };
-        // const handleSubmit = async (e) => {
-        //     e.preventDefault();
+}
     
-        //     try {
-        //         if (task.owner_id !== ownerId || task.project_id !== projectId) {
-        //             // Delete the current task from both APIs
-        //             await axios.delete(`/api/userDetails/${task.owner_id}/project/${task.project_id}/task/${task.task_id}`);
-    
-        //             // Create a new task with the updated details
-        //             const newTask = {
-        //                 task_description: taskDescription,
-        //                 task_dueDate: taskDueDate,
-        //                 task_status: taskStatus,
-        //                 owner_id: ownerId,
-        //                 project_id: projectId,
-        //             };
-    
-        //             // Create the new task in both APIs
-        //             await axios.post(`/api/userDetails/${ownerId}/project/${projectId}/task`, newTask);
-        //         } else {
-                        
-        //             // Update the task in the userDetails API
-        //             await axios.put(`/api/userDetails/${ownerId}/project/${projectId}/task/${task.task_id}`, {
-        //                 task_description: taskDescription,
-        //                 task_dueDate: taskDueDate,
-        //                 task_status: taskStatus,
-        //             });
-    
-        //         }
-
-        //         await axios.put(`/api/tasks/${task.task_id}`, {
-        //             task_description: taskDescription,
-        //             task_dueDate: taskDueDate,
-        //             task_status: taskStatus,
-        //         });
-
-        //         toast.success('Task updated successfully');
-        //         onSave(); // Refresh the task list
-        //         onClose(); // Close the dialog
-        //     } catch (error) {
-        //         console.error('Error updating task:', error);
-        //         toast.error('Error updating task. Please try again.');
-        //     }
-        // };
-
     return (
         <form onSubmit={handleSubmit}>
             <Typography variant="h6">Edit Task</Typography>
@@ -134,7 +133,7 @@ const EditTask = ({ task, onClose, onSave }) => {
                 </Select>
             </FormControl>
             <FormControl fullWidth margin="normal">
-                <InputLabel>Project ID</InputLabel>
+                <InputLabel>Project</InputLabel>
                 <Select
                     value={projectId}
                     onChange={(e) => setProjectId(e.target.value)}
@@ -148,7 +147,7 @@ const EditTask = ({ task, onClose, onSave }) => {
                 </Select>
             </FormControl>
             <FormControl fullWidth margin="normal">
-                <InputLabel>Owner ID</InputLabel>
+                <InputLabel>Owner</InputLabel>
                 <Select
                     value={ownerId}
                     onChange={(e) => setOwnerId(e.target.value)}
@@ -172,3 +171,5 @@ const EditTask = ({ task, onClose, onSave }) => {
 };
 
 export default EditTask;
+
+

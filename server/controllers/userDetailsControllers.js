@@ -194,38 +194,40 @@ exports.getProjectsByUserId = async (req, res) => {
 // Update a project in user details by user ID and project ID
 exports.updateProjectById = async (req, res) => {
     try {
-        const userId = Number(req.params.userId); // Get the user ID from the request parameters
         const projectId = Number(req.params.projectId); // Get the project ID from the request parameters
         const { project_name, project_description } = req.body; // Get the updated project data from the request body
 
-        // Find user details by user_id
-        const userDetails = await UserDetails.findOne({ user_id: userId });
+        // Find all user details containing the specified project
+        const userDetailsList = await UserDetails.find({ "ProjectDescription.project_id": projectId });
 
-        if (!userDetails) {
-            return res.status(404).json({ message: 'User details not found' });
+        if (userDetailsList.length === 0) {
+            return res.status(404).json({ message: 'Project not found for any user' });
         }
 
-        // Find the project index for the given project_id
-        const projectIndex = userDetails.ProjectDescription.findIndex(
-            (p) => p.project_id === projectId
-        );
+        // Update the project details for each user
+        for (const userDetails of userDetailsList) {
+            // Find the project index for the given project_id
+            const projectIndex = userDetails.ProjectDescription.findIndex(
+                (p) => p.project_id === projectId
+            );
 
-        if (projectIndex === -1) {
-            return res.status(404).json({ message: 'Project not found' });
+            if (projectIndex !== -1) {
+                // Update the project details
+                userDetails.ProjectDescription[projectIndex].project_name = project_name || userDetails.ProjectDescription[projectIndex].project_name;
+                userDetails.ProjectDescription[projectIndex].project_description = project_description || userDetails.ProjectDescription[projectIndex].project_description;
+
+                // Save the updated user details
+                await userDetails.save();
+            }
         }
 
-        // Update the project details
-        userDetails.ProjectDescription[projectIndex].project_name = project_name || userDetails.ProjectDescription[projectIndex].project_name;
-        userDetails.ProjectDescription[projectIndex].project_description = project_description || userDetails.ProjectDescription[projectIndex].project_description;
-
-        // Save the updated user details
-        const updatedUserDetails = await userDetails.save();
-        res.status(200).json(updatedUserDetails);
+        res.status(200).json({ message: 'Project details updated for all users' });
     } catch (error) {
         console.error('Error updating project:', error);
         res.status(500).json({ message: error.message });
     }
 };
+
 
 // Update a task in a project in user details by user ID, project ID, and task ID
 exports.updateTaskById = async (req, res) => {

@@ -51,7 +51,7 @@ const ProjectForm = ({ selectedProject, onCreate, onUpdate, onCancel }) => {
                 toast.success('Project updated successfully!');
 
                 // Update the project in the userDetails API
-                await axios.put(`/api/userDetails/${selectedProject.owner_id}/project/${selectedProject.project_id}`, {
+                await axios.put(`/api/userDetails/project/${selectedProject.project_id}`, {
                     project_name: projectName,
                     project_description: projectDescription
                 });
