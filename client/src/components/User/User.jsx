@@ -60,7 +60,7 @@ import { useDispatch, useSelector } from 'react-redux';
 // import { fetchUserProjects } from '../../actions/UserProjectActions';
 // import { fetchUserTasks } from '../../actions/taskActions';
 import MainBar from './Mainbar';
-import LeftSideBar from './leftsidebar';
+import LeftSideBar from './LeftSideBar';
 import { Container, Typography, Grid, Paper, AppBar, Toolbar, Box, CssBaseline } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
