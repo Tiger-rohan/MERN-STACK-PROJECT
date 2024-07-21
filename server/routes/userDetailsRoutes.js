@@ -20,7 +20,6 @@ router.put('/:id', userDetailsController.updateUserDetails);
 // Update project by project ID
 router.put('/project/:projectId', userDetailsController.updateProjectById);
 
-
 // Update task by user ID, project ID, and task ID
 router.put('/:userId/project/:projectId/task/:taskId', userDetailsController.updateTaskById);
 
@@ -33,5 +32,7 @@ router.delete('/project/:projectId', userDetailsController.deleteProjectAndTasks
 // Delete task by user ID, project ID, and task ID
 router.delete('/:userId/project/:projectId/task/:taskId', userDetailsController.deleteTaskById);
 
+// Delete a project by user ID and project ID
+router.delete('/:userId/project/:projectId', userDetailsController.deleteProjectByUserIdAndProjectId);
 
 module.exports = router;

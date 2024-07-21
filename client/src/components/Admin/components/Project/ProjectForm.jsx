@@ -42,7 +42,10 @@ const ProjectForm = ({ selectedProject, onCreate, onUpdate, onCancel }) => {
 
         try {
             let projectResponse;
-            if (selectedProject) {
+            const previousOwnerId = selectedProject ? selectedProject.owner_id : null;
+
+            if (selectedProject && previousOwnerId === ownerId) {
+                // Update existing project under the same owner
                 projectResponse = await axios.put(`/api/projects/${selectedProject.project_id}`, {
                     project_name: projectName,
                     project_description: projectDescription,
@@ -56,10 +59,16 @@ const ProjectForm = ({ selectedProject, onCreate, onUpdate, onCancel }) => {
                     project_description: projectDescription
                 });
                 toast.success('Project details updated in user details successfully!');
-                
+
+                // Update the project details in all user details
+                await axios.put(`/api/userDetails/project/${selectedProject.project_id}`, {
+                    project_name: projectName,
+                    project_description: projectDescription
+                });
+
                 window.location.reload();
-                
             } else {
+                // If owner ID has changed, create a new project under the new owner
                 projectResponse = await axios.post('/api/projects', {
                     project_name: projectName,
                     project_description: projectDescription,
@@ -86,25 +95,27 @@ const ProjectForm = ({ selectedProject, onCreate, onUpdate, onCancel }) => {
                     toast.error('Failed to update user details.');
                 }
 
+                // Delete the project from the previous owner if it exists
+                if (previousOwnerId) {
+                    await axios.delete(`/api/projects/${selectedProject.project_id}`);
+                    await axios.delete(`/api/userDetails/${previousOwnerId}/project/${selectedProject.project_id}`);
+                    toast.success('Project deleted from previous owner successfully!');
+                }
+
                 window.location.reload();
-                
             }
 
             // Clear form fields
             setProjectName('');
             setProjectDescription('');
             setOwnerId('');
-            
+
             // Close the form
             onCancel();
         } catch (error) {
-            // console.error('Error creating or updating project:', error);
-            // toast.error('Error creating or updating project. Please try again.');
-            toast.success('Project Updated Successfully');
+            toast.error('Error creating or updating project. Please try again.');
             onCancel();
-            onUpdate()
-            
-
+            onUpdate();
         }
     };
 

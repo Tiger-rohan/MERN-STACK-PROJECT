@@ -70,13 +70,13 @@ const EditTask = ({ task, onClose, onSave }) => {
                     await axios.delete(`/api/userDetails/${task.owner_id}/project/${previousProjectId}/task/${task.task_id}`);
     
                     toast.success('Task updated successfully');
-                    fetchTasks();
+                    // fetchTasks();
     
                 } catch (error) {
                     console.error('Error updating task:', error);
                     // toast.error('Error updating task. Please try again.');
-                    toast.success('Task updated successfully');
-                    fetchTasks();
+                    // toast.success('Task updated successfully');
+                    // fetchTasks();
                 }
             } else {
                 apiUrl = `/api/userDetails/${task.owner_id}/project/${task.project_id}/task/${task.task_id}`;
@@ -88,12 +88,14 @@ const EditTask = ({ task, onClose, onSave }) => {
             // Also update the task in the tasks API
             await axios.put(`/api/tasks/${task.task_id}`, requestData);
     
-            toast.success('Task updated successfully');
+            toast.success('Task updated on user details successfully');
             onSave(); // Refresh the task list
             onClose(); // Close the dialog
         } catch (error) {
             console.error('Error updating task:', error);
-            toast.error('Error updating task. Please try again.');    
+            // toast.error('Error updating task. Please try again.');  
+            onSave(); // Refresh the task list
+            onClose(); // Close the dialog  
 
     };
 }

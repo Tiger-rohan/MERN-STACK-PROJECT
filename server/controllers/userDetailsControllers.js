@@ -191,7 +191,6 @@ exports.getProjectsByUserId = async (req, res) => {
     }
 };
 
-// Update a project in user details by user ID and project ID
 exports.updateProjectById = async (req, res) => {
     try {
         const projectId = Number(req.params.projectId); // Get the project ID from the request parameters
@@ -227,7 +226,6 @@ exports.updateProjectById = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
 
 // Update a task in a project in user details by user ID, project ID, and task ID
 exports.updateTaskById = async (req, res) => {
@@ -272,6 +270,36 @@ exports.updateTaskById = async (req, res) => {
         res.status(200).json(updatedUserDetails);
     } catch (error) {
         console.error('Error updating task:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Delete a project by user ID and project ID
+exports.deleteProjectByUserIdAndProjectId = async (req, res) => {
+    try {
+        const userId = Number(req.params.userId);
+        const projectId = Number(req.params.projectId);
+
+        const userDetails = await UserDetails.findOne({ user_id: userId });
+
+        if (!userDetails) {
+            return res.status(404).json({ message: 'User details not found' });
+        }
+
+        const projectIndex = userDetails.ProjectDescription.findIndex(
+            (p) => p.project_id === projectId
+        );
+
+        if (projectIndex === -1) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        userDetails.ProjectDescription.splice(projectIndex, 1);
+
+        const updatedUserDetails = await userDetails.save();
+        res.status(200).json(updatedUserDetails);
+    } catch (error) {
+        console.error('Error deleting project:', error);
         res.status(500).json({ message: error.message });
     }
 };
