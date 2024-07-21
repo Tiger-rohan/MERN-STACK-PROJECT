@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { useNavigate, Link } from 'react-router-dom';
 import { TextField, Button, Select, MenuItem, InputLabel, FormControl, Container, Typography, Box, Paper } from '@mui/material';
+import { motion } from 'framer-motion';
 
 
 export default function Register() {
@@ -52,6 +53,11 @@ export default function Register() {
 
   return (
     <Container maxWidth="sm">
+      <motion.div
+                initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+      >
       <Box sx={{ mt: 4 }}>
         <Paper elevation={3} sx={{ p: 4 }}>
           <Typography variant="h4" component="h1" gutterBottom>
@@ -110,6 +116,7 @@ export default function Register() {
           </Box>
         </Paper>
       </Box>
+      </motion.div>
     </Container>
   );
 }

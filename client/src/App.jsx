@@ -6,10 +6,8 @@ import {thunk} from 'redux-thunk'; // Remove the curly braces
 import { Toaster } from 'react-hot-toast';
 
 import rootReducer from './store/rootReducer'; // Adjust the path as necessary
-import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
 import Admin from './components/Admin/Admin';
 import User from './components/User/User';
 import ProjectCreation from './components/Admin/components/ProjectCreation'; // Adjust the path as necessary
@@ -45,8 +43,6 @@ function App() {
         <Routes>
           <Route path='/' element={<Login />} />
           <Route path='/register' element={<Register />} />
-          <Route path='/home' element={<Home />} />
-          <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/admin' element={<Admin />} />
           <Route path='/user' element={<User />} />
           <Route path='/project-creation' element={<ProjectCreation />} />

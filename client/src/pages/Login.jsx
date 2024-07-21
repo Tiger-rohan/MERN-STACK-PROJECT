@@ -80,5 +80,5 @@ export default function Login() {
                 </Paper>
             </motion.div>
         </Container>
-    );
+    );    
 }
