@@ -6,10 +6,13 @@ const userDetailsController = require('../controllers/userDetailsControllers');
 router.get('/', userDetailsController.getAllUserDetails);
 
 // Get user details by ID
-router.get('/:id', userDetailsController.getUserDetailsById);
+router.get('/:user_id', userDetailsController.getUserDetailsById);
 
 // Fetch all projects for a specific user by user ID
 router.get('/:userId/projects', userDetailsController.getProjectsByUserId);
+
+// Fetch all tasks for a specific project assigned to a user by user ID and project ID
+router.get('/:userId/project/:projectId/tasks', userDetailsController.getTasksByUserIdAndProjectId);
 
 // Create new user details
 router.post('/', userDetailsController.createUserDetails);
@@ -35,7 +38,5 @@ router.delete('/:userId/project/:projectId/task/:taskId', userDetailsController.
 // Delete a project by user ID and project ID
 router.delete('/:userId/project/:projectId', userDetailsController.deleteProjectByUserIdAndProjectId);
 
-// Fetch all tasks for a specific project assigned to a user by user ID and project ID
-router.get('/:userId/project/:projectId/tasks', userDetailsController.getTasksByUserIdAndProjectId);
 
 module.exports = router;

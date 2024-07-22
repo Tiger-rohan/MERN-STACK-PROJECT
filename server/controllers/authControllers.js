@@ -10,7 +10,7 @@ const test = (req, res) => {
 
 const registerUser = async (req, res) => {
     try {
-        const { user_name, email, password } = req.body;
+        const { user_name, email, password, role } = req.body;
         if (!user_name) {
             return res.json({ error: "Name is required" });
         }
@@ -22,7 +22,7 @@ const registerUser = async (req, res) => {
             return res.json({ error: "Email is already taken" });
         }
         const hashedPassword = await hashPassword(password);
-        const user = await User.create({ user_name, email, password: hashedPassword });
+        const user = await User.create({ user_name, email, password: hashedPassword, role });
         return res.json(user);
     } catch (error) {
         console.log(error);

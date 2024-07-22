@@ -20,7 +20,7 @@ export const fetchUserProjects = createAsyncThunk(
     async ({ userId, projectId }, { rejectWithValue }) => {
       try {
         const response = await api.getUserTasks(userId, projectId);
-        console.log(response)
+        console.log(response.data)
         return response.data;
       } catch (err) {
           console.log(err)

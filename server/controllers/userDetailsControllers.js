@@ -13,7 +13,8 @@ exports.getAllUserDetails = async (req, res) => {
 // Get user details by ID
 exports.getUserDetailsById = async (req, res) => {
     try {
-        const userDetails = await UserDetails.findById(req.params.id);
+        const userDetails = await UserDetails.findOne({ user_id: req.params.user_id });
+
         if (!userDetails) {
             return res.status(404).json({ message: 'User details not found' });
         }
@@ -22,6 +23,7 @@ exports.getUserDetailsById = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 // Create new user details
 exports.createUserDetails = async (req, res) => {
@@ -325,26 +327,43 @@ exports.getProjectsByUserId = async (req, res) => {
 // Fetch all tasks for a specific project assigned to a user by user ID and project ID
 exports.getTasksByUserIdAndProjectId = async (req, res) => {
     try {
-      const userId = req.params.userId;
-      const projectId = req.params.projectId;
-      const userDetails = await UserDetails.findOne({ user_id: userId });
+      // Extract userId and projectId from request parameters
+      const userId = parseInt(req.params.userId, 10);
+      const projectId = parseInt(req.params.projectId, 10);
   
+      // Check if userId and projectId are valid numbers
+      if (isNaN(userId) || isNaN(projectId)) {
+        return res.status(400).json({ message: 'Invalid user ID or project ID' });
+      }
+  
+      // Find user details by userId
+      const userDetails = await UserDetails.findOne({ user_id: userId }).exec();
+  
+      // Check if user details were found
       if (!userDetails) {
         return res.status(404).json({ message: 'User not found' });
       }
   
+      // Find the project within the user's projects
       const project = userDetails.ProjectDescription.find(
-        (proj) => proj.project_id === Number(projectId)
+        (proj) => proj.project_id === projectId
       );
   
+      // Check if the project was found
       if (!project) {
         return res.status(404).json({ message: 'Project not found' });
       }
   
+      // Extract tasks from the project
       const tasks = project.TaskDescription;
+  
+      // Respond with the tasks
       res.status(200).json(tasks);
     } catch (error) {
-      res.status(500).json({ message: 'Server Error', error });
+      // Log the error for debugging
+      console.error('Error fetching tasks:', error);
+      res.status(500).json({ message: 'Server Error', error: error.message });
     }
   };
+  
   

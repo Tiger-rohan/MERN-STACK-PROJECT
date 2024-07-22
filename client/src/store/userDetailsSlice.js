@@ -17,6 +17,7 @@ export const fetchUserDetails = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await axios.get(`/api/userDetails/${id}`);
+      console.log(response.data)
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);
@@ -111,7 +112,7 @@ const userDetailsSlice = createSlice({
         state.error = action.payload;
         state.loading = false;
       })
-      // Fetch User Tasks
+      // Fetch User Tasks by Project
       .addCase(fetchUserTasks.pending, (state) => {
         state.loading = true;
         state.error = null;

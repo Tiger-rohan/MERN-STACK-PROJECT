@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { fetchUserProjects, fetchUserTasks } from '../../actions/UserProjectActions';
 import LeftSideBar from './leftsidebar';
 import MainBar from './mainbar';
-import { Container, Typography, Grid, Paper, AppBar, Toolbar, Box, CssBaseline } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Grid, Paper, AppBar, Toolbar, Box, CssBaseline, Typography } from '@mui/material';
+import { useAppSelector } from '../../services/hooks';
+import { fetchUserDetails } from '../../store/userDetailsSlice';
 
 const User = () => {
   const dispatch = useDispatch();
-  const { user } = useSelector(state => state.user);
+  const { user } = useAppSelector((state) => state.user);
   const userId = user?.user_id;
 
   const [selectedProjectId, setSelectedProjectId] = useState(null);
 
   useEffect(() => {
     if (userId) {
-      dispatch(fetchUserProjects(userId));
+      dispatch(fetchUserDetails(userId)); // Fetch user details by user_id
+      dispatch(fetchUserProjects(userId)); // Fetch user projects
     }
   }, [userId, dispatch]);
 
@@ -25,27 +27,11 @@ const User = () => {
     }
   }, [userId, selectedProjectId, dispatch]);
 
-//   useEffect(() => {
-//     if (userId) {
-//       dispatch(fetchUserTasks(userId));
-//       dispatch(fetchUserProjects(userId));
-//     }
-//   }, [userId, dispatch]);
-
-//   useEffect(() => {
-//     const interval = setInterval(() => {
-//       if (userId) {
-//         dispatch(fetchUserTasks(userId));
-//         dispatch(fetchUserProjects(userId));
-//       }
-//     }, 5000); // Fetch data every 5 seconds
-
-//     return () => clearInterval(interval); // Cleanup interval on component unmount
-//   }, [userId, dispatch]);
-
-  const handleSelectProject = (projectId) => {
+  const handleProjectSelect = (projectId) => {
     setSelectedProjectId(projectId);
   };
+
+  const { userDetails } = useAppSelector((state) => state.userDetails);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
@@ -53,7 +39,7 @@ const User = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            {user?.name ? `${user.name}'s Dashboard` : 'User Dashboard'}
+            {userDetails?.user_name ? `${userDetails.user_name}'s Dashboard` : 'User Dashboard'}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -61,7 +47,7 @@ const User = () => {
         <Grid container spacing={2} sx={{ flexGrow: 1 }}>
           <Grid item xs={12} md={3}>
             <Paper sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 2 }}>
-              <LeftSideBar onSelectProject={handleSelectProject} />
+              <LeftSideBar onSelectProject={handleProjectSelect} />
             </Paper>
           </Grid>
           <Grid item xs={12} md={9}>

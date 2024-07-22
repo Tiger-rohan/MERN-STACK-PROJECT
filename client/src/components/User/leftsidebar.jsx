@@ -1,12 +1,18 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { List, ListItem, ListItemText, Typography } from '@mui/material';
+import { motion } from 'framer-motion';
 
 const LeftSideBar = ({ onSelectProject }) => {
   const { projects } = useSelector(state => state.userDetails);
 
   return (
     <div>
+      <motion.div
+                initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
       <Typography variant="h5">Projects Owned</Typography>
       <List>
         {projects.map(project => (
@@ -15,6 +21,7 @@ const LeftSideBar = ({ onSelectProject }) => {
           </ListItem>
         ))}
       </List>
+      </motion.div>
     </div>
   );
 };

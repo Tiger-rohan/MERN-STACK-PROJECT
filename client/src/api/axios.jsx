@@ -21,4 +21,4 @@ API.interceptors.request.use(
 
 export const login = (authData) => API.post('/login',authData)
 export const getUserProjects = (user_id) => API.get(`/api/userDetails/${user_id}/projects`)
-export const getUserTasks = (user_id, project_id) => API.get(`/api/userDetails/${user_id}/projects/${project_id}/tasks`)
+export const getUserTasks = (user_id, project_id) => API.get(`/api/userDetails/${user_id}/project/${project_id}/tasks`)
