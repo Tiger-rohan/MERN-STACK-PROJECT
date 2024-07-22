@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { fetchUserProjects, fetchUserTasks } from '../../actions/UserProjectActions';
 import LeftSideBar from './leftsidebar';
 import MainBar from './mainbar';
-import { Grid, Paper, AppBar, Toolbar, Box, CssBaseline, Typography } from '@mui/material';
+import { Grid, Paper, AppBar, Toolbar, Box, CssBaseline, Typography, Button } from '@mui/material';
 import { useAppSelector } from '../../services/hooks';
 import { fetchUserDetails } from '../../store/userDetailsSlice';
+import { logoutUser } from '../../actions/authAction';
 
 const User = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.user);
   const userId = user?.user_id;
 
@@ -31,6 +34,11 @@ const User = () => {
     setSelectedProjectId(projectId);
   };
 
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    navigate('/');
+  };
+
   const { userDetails } = useAppSelector((state) => state.userDetails);
 
   return (
@@ -41,6 +49,9 @@ const User = () => {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             {userDetails?.user_name ? `${userDetails.user_name}'s Dashboard` : 'User Dashboard'}
           </Typography>
+          <Button color="inherit" onClick={handleLogout}>
+            Logout
+          </Button>
         </Toolbar>
       </AppBar>
       <Box sx={{ display: 'flex', flexGrow: 1, p: 2 }}>

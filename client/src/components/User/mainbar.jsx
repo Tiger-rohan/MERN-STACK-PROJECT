@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { List, ListItem, ListItemText, Typography } from '@mui/material';
+import { List, ListItem, ListItemText, Typography, Divider, Box } from '@mui/material';
 import { useAppSelector } from '../../services/hooks';
+import CheckIcon from '@mui/icons-material/Check';
+import ToggleButton from '@mui/material/ToggleButton';
+import axios from 'axios';
 
 const MainBar = ({ selectedProjectId }) => {
   const { tasks } = useAppSelector(state => state.userDetails);
@@ -18,38 +21,114 @@ const MainBar = ({ selectedProjectId }) => {
     ? tasks.filter(task => task.project_id === selectedProjectId)
     : [];
 
-
   // Click handler to show all tasks
   const handleHeaderClick = () => {
     setShowAllTasks(true);
   };
 
+  // Function to handle toggle button click
+  const handleToggleClick = async (taskId, userId, projectId, currentStatus) => {
+    try {
+      const newStatus = currentStatus === 'completed' ? 'not started' : 'completed';
+
+      // Send PUT request to update task status
+      await axios.put(`/api/userDetails/${userId}/project/${projectId}/task/${taskId}`, {
+        task_status: newStatus
+      });
+
+      await axios.put(`/api/tasks/${taskId}`, {
+        task_status: newStatus
+      });
+
+      // Refresh the task list by re-fetching data
+      setShowAllTasks(true);
+    } catch (error) {
+      console.error('Error updating task status:', error);
+    }
+  };
+
   return (
-    <div>
+    <Box p={2}>
       <motion.div
-        initial={{ opacity: 0, y: -50 }}
+        initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.6 }}
       >
-        <Typography variant="h5" onClick={handleHeaderClick} style={{ cursor: 'pointer' }}>
-          Tasks
+        <Typography
+          variant="h5"
+          onClick={handleHeaderClick}
+          style={{ cursor: 'pointer', marginBottom: '1rem', fontWeight: 'bold' }}
+          color="primary"
+        >
+          Tasks Assigned
         </Typography>
         <List>
           {selectedProjectId ? (
             tasksToDisplay.length > 0 ? (
               tasksToDisplay.map(task => (
-                <ListItem key={task._id}>
-                  <ListItemText
-                    primary={task.task_description}
-                    secondary={
-                      <>
-                        {`Status: ${task.task_status}`}
-                        <br />
-                        {`Due Date: ${new Date(task.task_dueDate).toLocaleDateString()}`}
-                      </>
-                    }
-                  />
-                </ListItem>
+                <motion.div
+                  key={task.task_id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ListItem
+                    style={{
+                      border: '1px solid #ddd',
+                      borderRadius: '8px',
+                      marginBottom: '0.5rem',
+                      padding: '1rem',
+                      backgroundColor: '#f9f9f9'
+                    }}
+                  >
+                    <Box display="flex" alignItems="center" width="100%">
+                      <Box flexGrow={1}>
+                        <ListItemText
+                          primary={
+                            <Typography
+                              variant="body1"
+                              style={{ fontSize: '1rem', fontWeight: 'bold' }}
+                            >
+                              {task.task_description}
+                            </Typography>
+                          }
+                          secondary={
+                            <>
+                              <Box display="flex" alignItems="center">
+                                <Typography
+                                  variant="body2"
+                                  color="textSecondary"
+                                  style={{ marginRight: '0.5rem', fontSize: '0.875rem' }}
+                                >
+                                  {`Status: ${task.task_status}`}
+                                </Typography>
+                                <ToggleButton
+                                  value="check"
+                                  selected={task.task_status === 'completed'}
+                                  onChange={() => {
+                                    handleToggleClick(task.task_id, task.owner_id, task.project_id, task.task_status);
+                                  }}
+                                  style={{
+                                    backgroundColor: task.task_status === 'completed' ? '#4caf50' : '#e0e0e0',
+                                    color: task.task_status === 'completed' ? '#fff' : '#000',
+                                    transition: 'background-color 0.3s, color 0.3s',
+                                    marginRight: '1rem'
+                                  }}
+                                >
+                                  <CheckIcon />
+                                </ToggleButton>
+                              </Box>
+                              <Typography variant="body2" color="textSecondary">
+                                {`Due Date: ${new Date(task.task_dueDate).toLocaleDateString()}`}
+                              </Typography>
+                            </>
+                          }
+                        />
+                      </Box>
+                    </Box>
+                  </ListItem>
+                  <Divider />
+                </motion.div>
               ))
             ) : (
               <ListItem>
@@ -63,7 +142,7 @@ const MainBar = ({ selectedProjectId }) => {
           )}
         </List>
       </motion.div>
-    </div>
+    </Box>
   );
 };
 

@@ -13,7 +13,7 @@ const LeftSideBar = ({ onSelectProject }) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
             >
-      <Typography variant="h5">Projects Owned</Typography>
+      <Typography variant="h5">Projects</Typography>
       <List>
         {projects.map(project => (
           <ListItem button key={project.project_id} onClick={() => onSelectProject(project.project_id)}>

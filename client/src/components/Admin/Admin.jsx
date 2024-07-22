@@ -1,41 +1,71 @@
-import React from "react";
-import { Container, Typography, Grid, Paper } from '@mui/material';
+import React, { useState } from "react";
+import { AppBar, Box, Button, CssBaseline, Paper, Tab, Tabs, Toolbar, Typography } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import TaskManager from "./components/Tasks/TaskManager";
 import ProjectPage from "./components/Project/ProjectPage";
-import { motion } from 'framer-motion';
+import { logoutUser } from '../../actions/authAction';
+import { styled } from '@mui/material/styles';
 
+// Custom styled tab component
+const StyledTab = styled(Tab)(({ theme }) => ({
+    fontSize: '0.875rem', // Smaller font size
+    textTransform: 'none', // Remove text transformation
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif', // Stylish font
+    fontWeight: theme.typography.fontWeightRegular,
+    '&.Mui-selected': {
+        fontWeight: theme.typography.fontWeightMedium,
+        color: theme.palette.primary.main,
+    },
+}));
 
-function Admin() {
+const Admin = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [selectedTab, setSelectedTab] = useState(0); // State to track the selected tab
+
+    const handleLogout = () => {
+        dispatch(logoutUser());
+        navigate('/');
+    };
+
+    const handleTabChange = (event, newValue) => {
+        setSelectedTab(newValue);
+    };
+
     return (
-        <Container>
-            <motion.div
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-            >
-            <Typography variant="h3" gutterBottom align="center">
-                Admin Dashboard
-            </Typography>
-            <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                    <Paper elevation={3} style={{ padding: '20px' }}>
-                        <Typography variant="h4" gutterBottom>
-                          
-                        </Typography>
-                        <TaskManager />
-                    </Paper>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                    <Paper elevation={3} style={{ padding: '20px' }}>
-                        <Typography variant="h4" gutterBottom>
-                                                  </Typography>
-                        <ProjectPage />
-                    </Paper>
-                </Grid>
-            </Grid>
-            </motion.div>
-        </Container>
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+            <CssBaseline />
+            <AppBar position="static">
+                <Toolbar>
+                    <Typography variant="h6" sx={{ flexGrow: 1, fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif' }}>
+                        Admin Dashboard
+                    </Typography>
+                    <Button color="inherit" onClick={handleLogout}>
+                        Logout
+                    </Button>
+                </Toolbar>
+            </AppBar>
+            <Box sx={{ display: 'flex', flexGrow: 1, p: 2 }}>
+                <Paper sx={{ width: '100%', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                    <Tabs
+                        value={selectedTab}
+                        onChange={handleTabChange}
+                        aria-label="admin tabs"
+                        variant="fullWidth"
+                        sx={{ borderBottom: 1, borderColor: 'divider' }}
+                    >
+                        <StyledTab label="Task Manager" />
+                        <StyledTab label="Project Page" />
+                    </Tabs>
+                    <Box sx={{ p: 2 }}>
+                        {selectedTab === 0 && <TaskManager />}
+                        {selectedTab === 1 && <ProjectPage />}
+                    </Box>
+                </Paper>
+            </Box>
+        </Box>
     );
-}
+};
 
 export default Admin;

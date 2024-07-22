@@ -1,6 +1,9 @@
+// authAction.js
+
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as api from '../api/axios';
 import Cookies from 'js-cookie';
+import { logout } from '../store/userSlice';
 
 export const loginUser = createAsyncThunk('user/login', async (userData, { rejectWithValue }) => {
   try {
@@ -14,3 +17,9 @@ export const loginUser = createAsyncThunk('user/login', async (userData, { rejec
     return rejectWithValue(error.response.data);
   }
 });
+
+export const logoutUser = () => (dispatch) => {
+  Cookies.remove('token');
+  localStorage.removeItem('jwtToken');
+  dispatch(logout());
+};
