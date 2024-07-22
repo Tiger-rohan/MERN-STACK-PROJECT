@@ -17,6 +17,7 @@ const User = () => {
 
   const [selectedProjectId, setSelectedProjectId] = useState(null);
 
+
   useEffect(() => {
     if (userId) {
       dispatch(fetchUserDetails(userId)); // Fetch user details by user_id
@@ -73,3 +74,5 @@ const User = () => {
 };
 
 export default User;
+
+

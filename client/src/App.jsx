@@ -18,15 +18,16 @@ axios.defaults.withCredentials = true;
 
 function App() {
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector(state => state.user);
+  const { user,isAuthenticated } = useSelector(state => state.user);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token && !isAuthenticated) {
-      dispatch(loginUser({ token }));
-    }
-  }, [dispatch, isAuthenticated]);
-
+  // useEffect(() => {
+  //   const token = sessionStorage.getItem('token');
+  //   console.log(token)
+  //   if (token && !isAuthenticated) {
+  //     dispatch(loginUser({ token }));
+  //   }
+  // }, [dispatch, isAuthenticated]);
+  console.log(isAuthenticated)
   return (
     <div>
       <Toaster position='bottom-right' toastOptions={{ duration: 2000 }} />
