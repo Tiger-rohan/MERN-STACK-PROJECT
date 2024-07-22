@@ -8,18 +8,17 @@ import axios from 'axios';
 
 const MainBar = ({ selectedProjectId }) => {
   const { tasks } = useAppSelector(state => state.userDetails);
+  const [localTasks, setLocalTasks] = useState(tasks);
   const [showAllTasks, setShowAllTasks] = useState(false);
 
   useEffect(() => {
     if (selectedProjectId) {
       setShowAllTasks(false);
     }
-  }, [selectedProjectId]);
-
-  // Filter tasks based on selected project ID
-  const tasksToDisplay = selectedProjectId
-    ? tasks.filter(task => task.project_id === selectedProjectId)
-    : [];
+    // Set localTasks based on selected project ID
+    const filteredTasks = selectedProjectId ? tasks.filter(task => task.project_id === selectedProjectId) : [];
+    setLocalTasks(filteredTasks);
+  }, [selectedProjectId, tasks]);
 
   // Click handler to show all tasks
   const handleHeaderClick = () => {
@@ -40,8 +39,12 @@ const MainBar = ({ selectedProjectId }) => {
         task_status: newStatus
       });
 
-      // Refresh the task list by re-fetching data
-      setShowAllTasks(true);
+      // Update localTasks state to re-render the component with updated task status
+      setLocalTasks(prevTasks =>
+        prevTasks.map(task =>
+          task.task_id === taskId ? { ...task, task_status: newStatus } : task
+        )
+      );
     } catch (error) {
       console.error('Error updating task status:', error);
     }
@@ -64,8 +67,8 @@ const MainBar = ({ selectedProjectId }) => {
         </Typography>
         <List>
           {selectedProjectId ? (
-            tasksToDisplay.length > 0 ? (
-              tasksToDisplay.map(task => (
+            localTasks.length > 0 ? (
+              localTasks.map(task => (
                 <motion.div
                   key={task.task_id}
                   initial={{ opacity: 0, scale: 0.9 }}
