@@ -52,12 +52,14 @@ const loginUser = async (req, res) => {
 
 const fetchAllUsers = async (req, res) => {
     try {
-        const users = await User.find();
+        // Find users whose role is "user"
+        const users = await User.find({ role: "user" });
         res.json(users);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 const getProfile = async (req, res) => {
     const { token } = req.cookies;
@@ -85,7 +87,7 @@ const getProfile = async (req, res) => {
 
 const getUsers = async (req, res) => {
     try {
-        const users = await User.find().select('-password');
+        const users = await User.find({role: "user"}).select('-password');
         res.json(users);
     } catch (error) {
         res.status(500).json({ message: error.message });

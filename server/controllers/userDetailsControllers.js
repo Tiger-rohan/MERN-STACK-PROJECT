@@ -3,7 +3,7 @@ const UserDetails = require('../models/UserDetails');
 // Get all user details
 exports.getAllUserDetails = async (req, res) => {
     try {
-        const userDetails = await UserDetails.find();
+        const userDetails = await UserDetails.find({role: "user"});
         res.status(200).json(userDetails);
     } catch (error) {
         res.status(500).json({ message: error.message });
