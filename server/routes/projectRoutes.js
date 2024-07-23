@@ -1,7 +1,7 @@
 // routes/projectRoutes.js
 const express = require('express');
 const router = express.Router();
-const { createProject, updateProject, deleteProject, getProjects , getProjectsByOwnerId, updateOwnerIdForProjects} = require('../controllers/projectController');
+const { createProject, updateProject, deleteProject, getProjects , getProjectsByOwnerId , updateOwnerIdForProject} = require('../controllers/projectController');
 
 // Create a new project
 router.post('/', createProject);
@@ -17,6 +17,7 @@ router.get('/', getProjects);
 
 router.get('/owner/:ownerId', getProjectsByOwnerId);
 
-router.put('/updateOwner/:oldOwnerId/:newOwnerId', updateOwnerIdForProjects);
+router.put('/updateOwner/:projectId/:newOwnerId', updateOwnerIdForProject);
+
 module.exports = router;
 

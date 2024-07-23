@@ -178,26 +178,27 @@ const ProjectForm = ({ selectedProject, onCreate, onUpdate, onCancel }) => {
                     });
                     toast.success('Project details updated in user details successfully!');
                 } else {
-                    
-                    
                     // Transfer project data from old owner to new owner
                     await axios.put(`/api/userDetails/transfer/${previousOwnerId}/${ownerId}/${selectedProject.project_id}`);
                     toast.success('Project data transferred from the old owner to the new owner successfully!');
+                    
+                    // Update owner_id for the selected project
+                    await axios.put(`/api/projects/updateOwner/${selectedProject.project_id}/${ownerId}`);
+                    toast.success('Owner ID updated for the project successfully!');
                     
                     // Update owner_id for tasks in the new owner's project
                     const tasksResponse = await axios.get(`/api/tasks?project_id=${selectedProject.project_id}`);
                     const tasks = tasksResponse.data;
                     
-                    // Update the project api
-
-
-                    await axios.put(`/api/projects/updateOwner/${previousOwnerId}/${ownerId}`);
-                    
-
+                    await Promise.all(tasks.map(task =>
+                        axios.put(`/api/tasks/${task.task_id}`, {
+                            task_description: task.task_description,
+                            task_dueDate: task.task_dueDate,
+                            task_status: task.task_status,
+                            owner_id: ownerId  // Update owner_id for each task
+                        })
+                    ));
                     toast.success('Tasks updated with the new owner successfully!');
-    
-                    // Delete the project from the previous owner if it exists
-                    
                 }
             } else {
                 // No selectedProject, meaning we are creating a new project
@@ -231,14 +232,11 @@ const ProjectForm = ({ selectedProject, onCreate, onUpdate, onCancel }) => {
             // Close the form
             onCancel();
         } catch (error) {
-            // console.error('Error creating or updating project:', error.response ? error.response.data : error.message);
-            // toast.error('Error creating or updating project. Please try again.');
-            // toast.success('Project Updated Successfully')
-            onCancel();
-
-
+            console.error('Error creating or updating project:', error.response ? error.response.data : error.message);
+            toast.error('Error creating or updating project. Please try again.');
         }
     };
+    
     
     
 

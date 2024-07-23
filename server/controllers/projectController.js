@@ -71,34 +71,31 @@ const getProjectsByOwnerId = async (req, res) => {
 };
 
 // Update owner_id for all projects associated with the old owner
-const updateOwnerIdForProjects = async (req, res) => {
-    const { oldOwnerId, newOwnerId } = req.params;
+// Update owner_id for a specific project
+const updateOwnerIdForProject = async (req, res) => {
+    const { projectId, newOwnerId } = req.params;
     try {
-        // Find all projects associated with the old owner
-        const projects = await Project.find({ owner_id: oldOwnerId });
+        // Find the project by project_id
+        const project = await Project.findOne({ project_id: projectId });
 
-        if (projects.length === 0) {
-            return res.status(404).json({ error: 'No projects found for the old owner' });
+        if (!project) {
+            return res.status(404).json({ error: 'Project not found' });
         }
 
-        // Update the owner_id for each project
-        await Promise.all(
-            projects.map(project =>
-                Project.findOneAndUpdate(
-                    { project_id: project.project_id },
-                    { owner_id: newOwnerId },
-                    { new: true, runValidators: true }
-                )
-            )
+        // Update the owner_id for the project
+        const updatedProject = await Project.findOneAndUpdate(
+            { project_id: projectId },
+            { owner_id: newOwnerId },
+            { new: true, runValidators: true }
         );
 
-        res.json({ message: 'Owner ID updated for all projects successfully' });
+        res.json({ message: 'Owner ID updated for the project successfully', project: updatedProject });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error updating owner ID for projects' });
+        res.status(500).json({ error: 'Error updating owner ID for the project' });
     }
 };
 
-module.exports = { createProject, updateProject, deleteProject, getProjects, getProjectsByOwnerId, updateOwnerIdForProjects };
+module.exports = { createProject, updateProject, deleteProject, getProjects, getProjectsByOwnerId, updateOwnerIdForProject };
 
 
