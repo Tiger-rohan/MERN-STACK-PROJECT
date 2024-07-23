@@ -11,8 +11,7 @@ export const loginUser = createAsyncThunk('user/login', async (userData, { rejec
   try {
     const response = await api.login(userData);
     const token = response.data.token;
-    Cookies.set('token', token);
-    localStorage.setItem('jwtToken', token);
+    sessionStorage.setItem('token', token);
     console.log(response.data.error)
     if(response.data.error === "No user found"){
       toast.error(response.data.error)
@@ -24,7 +23,7 @@ export const loginUser = createAsyncThunk('user/login', async (userData, { rejec
 
     // alert(`${response.data}`);
 
-    sessionStorage.setItem('token', token);
+
     return response.data; // Assuming response.data contains user object
   } catch (error) {
     // toast.error(error.response.data.message);
