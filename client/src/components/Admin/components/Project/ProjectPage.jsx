@@ -60,7 +60,8 @@ const ProjectPage = () => {
             // Delete all tasks associated with this project
             await axios.delete(`/api/tasks/project/${projectId}`);
             // Delete from the userDetails API (remove project from all users and tasks)
-            await axios.delete(`/api/userdetails/project/${projectId}`);
+            await axios.delete(`/api/userDetails/project/${projectId}`);
+            
             setSnackbarOpen(true);
         } catch (error) {
             console.error('Error deleting project', error);
@@ -107,7 +108,6 @@ const ProjectPage = () => {
                 onDelete={handleDeleteProject} 
             />
             <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-                {/* <DialogTitle>{selectedProject ? 'Update Project' : 'Create Project'}</DialogTitle> */}
                 <DialogContent>
                     <ProjectForm 
                         selectedProject={selectedProject} 

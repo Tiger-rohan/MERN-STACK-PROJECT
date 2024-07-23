@@ -131,7 +131,7 @@ const getTaskById = async (req, res) => {
 // Update a task
 const updateTask = async (req, res) => {
   try {
-    const { task_description, task_dueDate, task_status } = req.body;
+    const { task_description, task_dueDate, task_status, owner_id } = req.body;
 
     const taskId = Number(req.params.id);
     if (isNaN(taskId)) {
@@ -149,6 +149,11 @@ const updateTask = async (req, res) => {
         return res.status(400).json({ error: 'Invalid date format for task_dueDate. Use YYYY-MM-DD format.' });
       }
       updatedFields.task_dueDate = moment(task_dueDate).toDate();
+    }
+
+    // Update owner_id if provided
+    if (owner_id) {
+      updatedFields.owner_id = owner_id;
     }
 
     const task = await Task.findOneAndUpdate(

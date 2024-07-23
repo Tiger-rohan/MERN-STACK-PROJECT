@@ -1,3 +1,120 @@
+// import React, { useState, useEffect } from 'react';
+// import { TextField, Button, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+// import axios from 'axios';
+// import { toast } from 'react-hot-toast';
+
+// const ProjectForm = ({ selectedProject, onCreate, onUpdate, onCancel }) => {
+//     const [projectName, setProjectName] = useState('');
+//     const [projectDescription, setProjectDescription] = useState('');
+//     const [ownerId, setOwnerId] = useState('');
+//     const [owners, setOwners] = useState([]);
+
+//     useEffect(() => {
+//         if (selectedProject) {
+//             setProjectName(selectedProject.project_name);
+//             setProjectDescription(selectedProject.project_description);
+//             setOwnerId(selectedProject.owner_id);
+//         } else {
+//             setProjectName('');
+//             setProjectDescription('');
+//             setOwnerId('');
+//         }
+//     }, [selectedProject]);
+
+//     useEffect(() => {
+//         const fetchOwners = async () => {
+//             try {
+//                 const response = await axios.get('http://localhost:8000/users');
+//                 setOwners(response.data);
+//             } catch (error) {
+//                 console.error('Error fetching owners:', error);
+//             }
+//         };
+
+//         fetchOwners();
+//     }, []);
+
+//     // Create of Updated Projects
+
+//     const handleSubmit = async () => {
+//         if (!projectName || !projectDescription || !ownerId) {
+//             alert('All fields are required');
+//             return;
+//         }
+
+//         try {
+//             let projectResponse;
+//             const previousOwnerId = selectedProject ? selectedProject.owner_id : null;
+
+//             if (selectedProject && previousOwnerId === ownerId) {
+//                 // Update existing project under the same owner
+//                 projectResponse = await axios.put(`/api/projects/${selectedProject.project_id}`, {
+//                     project_name: projectName,
+//                     project_description: projectDescription,
+//                     owner_id: ownerId
+//                 });
+//                 toast.success('Project updated successfully!');
+
+//                 // Update the project in the userDetails API
+//                 await axios.put(`/api/userDetails/project/${selectedProject.project_id}`, {
+//                     project_name: projectName,
+//                     project_description: projectDescription
+//                 });
+//                 toast.success('Project details updated in user details successfully!');
+//             } else {
+//                 // If owner ID has changed, create a new project under the new owner
+//                 projectResponse = await axios.post('/api/projects', {
+//                     project_name: projectName,
+//                     project_description: projectDescription,
+//                     owner_id: ownerId
+//                 });
+//                 toast.success('Project created successfully!');
+
+//                 // Update the code here!!!
+         
+//                 const createdProject = projectResponse.data;
+
+//                 // Update the userDetails API with the new project
+//                 const userDetailsResponse = await axios.put(`/api/userDetails/${ownerId}`, {
+//                     ProjectDescription: [{
+//                         project_id: createdProject.project_id,
+//                         project_name: createdProject.project_name,
+//                         project_description: createdProject.project_description,
+//                         owner_id: createdProject.owner_id,
+//                         TaskDescription: []
+//                     }]
+//                 });       
+            
+
+//                 if (userDetailsResponse.status === 200) {
+//                     toast.success('User details updated successfully!');
+//                 } else {
+//                     toast.error('Failed to update user details.');
+//                 }
+
+//                 // Delete the project from the previous owner if it exists
+//                 if (previousOwnerId) {
+//                     await axios.delete(`/api/projects/${selectedProject.project_id}`);
+//                     await axios.delete(`/api/userDetails/project/${selectedProject.project_id}`);
+//                     toast.success('Project deleted from previous owner successfully!');
+//                 }
+//             }
+
+//             // Clear form fields
+//             setProjectName('');
+//             setProjectDescription('');
+//             setOwnerId('');
+
+//             // Close the form
+//             onCancel();
+        
+        
+//     } catch (error) {
+//             toast.error('Error creating or updating project. Please try again.');
+//         }
+//     };
+
+
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import axios from 'axios';
@@ -39,47 +156,62 @@ const ProjectForm = ({ selectedProject, onCreate, onUpdate, onCancel }) => {
             alert('All fields are required');
             return;
         }
-
+    
         try {
-            let projectResponse;
             const previousOwnerId = selectedProject ? selectedProject.owner_id : null;
+            let projectResponse;
+    
+            if (selectedProject) {
+                if (previousOwnerId === ownerId) {
+                    // Update existing project under the same owner
+                    projectResponse = await axios.put(`/api/projects/${selectedProject.project_id}`, {
+                        project_name: projectName,
+                        project_description: projectDescription,
+                        owner_id: ownerId
+                    });
+                    toast.success('Project updated successfully!');
+    
+                    // Update the project in the userDetails API
+                    await axios.put(`/api/userDetails/project/${selectedProject.project_id}`, {
+                        project_name: projectName,
+                        project_description: projectDescription
+                    });
+                    toast.success('Project details updated in user details successfully!');
+                } else {
+                    
+                    
+                    // Transfer project data from old owner to new owner
+                    await axios.put(`/api/userDetails/transfer/${previousOwnerId}/${ownerId}/${selectedProject.project_id}`);
+                    toast.success('Project data transferred from the old owner to the new owner successfully!');
+                    
+                    // Update owner_id for tasks in the new owner's project
+                    const tasksResponse = await axios.get(`/api/tasks?project_id=${selectedProject.project_id}`);
+                    const tasks = tasksResponse.data;
+                    
+                    // Update the project api
 
-            if (selectedProject && previousOwnerId === ownerId) {
-                // Update existing project under the same owner
-                projectResponse = await axios.put(`/api/projects/${selectedProject.project_id}`, {
-                    project_name: projectName,
-                    project_description: projectDescription,
-                    owner_id: ownerId
-                });
-                toast.success('Project updated successfully!');
 
-                // Update the project in the userDetails API
-                await axios.put(`/api/userDetails/project/${selectedProject.project_id}`, {
-                    project_name: projectName,
-                    project_description: projectDescription
-                });
-                toast.success('Project details updated in user details successfully!');
+                    await axios.put(`/api/projects/updateOwner/${previousOwnerId}/${ownerId}`);
+                    
 
-                // Update the project details in all user details
-                await axios.put(`/api/userDetails/project/${selectedProject.project_id}`, {
-                    project_name: projectName,
-                    project_description: projectDescription
-                });
-
-                window.location.reload();
+                    toast.success('Tasks updated with the new owner successfully!');
+    
+                    // Delete the project from the previous owner if it exists
+                    
+                }
             } else {
-                // If owner ID has changed, create a new project under the new owner
+                // No selectedProject, meaning we are creating a new project
                 projectResponse = await axios.post('/api/projects', {
                     project_name: projectName,
                     project_description: projectDescription,
                     owner_id: ownerId
                 });
                 toast.success('Project created successfully!');
-
+    
                 const createdProject = projectResponse.data;
-
+    
                 // Update the userDetails API with the new project
-                const userDetailsResponse = await axios.put(`/api/userDetails/${ownerId}`, {
+                await axios.put(`/api/userDetails/${ownerId}`, {
                     ProjectDescription: [{
                         project_id: createdProject.project_id,
                         project_name: createdProject.project_name,
@@ -88,36 +220,27 @@ const ProjectForm = ({ selectedProject, onCreate, onUpdate, onCancel }) => {
                         TaskDescription: []
                     }]
                 });
-
-                if (userDetailsResponse.status === 200) {
-                    toast.success('User details updated successfully!');
-                } else {
-                    toast.error('Failed to update user details.');
-                }
-
-                // Delete the project from the previous owner if it exists
-                if (previousOwnerId) {
-                    await axios.delete(`/api/projects/${selectedProject.project_id}`);
-                    await axios.delete(`/api/userDetails/${previousOwnerId}/project/${selectedProject.project_id}`);
-                    toast.success('Project deleted from previous owner successfully!');
-                }
-
-                window.location.reload();
+                toast.success('User details updated with the new project successfully!');
             }
-
+    
             // Clear form fields
             setProjectName('');
             setProjectDescription('');
             setOwnerId('');
-
+    
             // Close the form
             onCancel();
         } catch (error) {
-            toast.error('Error creating or updating project. Please try again.');
+            // console.error('Error creating or updating project:', error.response ? error.response.data : error.message);
+            // toast.error('Error creating or updating project. Please try again.');
+            // toast.success('Project Updated Successfully')
             onCancel();
-            onUpdate();
+
+
         }
     };
+    
+    
 
     return (
         <div>

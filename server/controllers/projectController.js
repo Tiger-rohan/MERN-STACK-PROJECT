@@ -70,4 +70,35 @@ const getProjectsByOwnerId = async (req, res) => {
     }
 };
 
-module.exports = { createProject, updateProject, deleteProject, getProjects, getProjectsByOwnerId };
+// Update owner_id for all projects associated with the old owner
+const updateOwnerIdForProjects = async (req, res) => {
+    const { oldOwnerId, newOwnerId } = req.params;
+    try {
+        // Find all projects associated with the old owner
+        const projects = await Project.find({ owner_id: oldOwnerId });
+
+        if (projects.length === 0) {
+            return res.status(404).json({ error: 'No projects found for the old owner' });
+        }
+
+        // Update the owner_id for each project
+        await Promise.all(
+            projects.map(project =>
+                Project.findOneAndUpdate(
+                    { project_id: project.project_id },
+                    { owner_id: newOwnerId },
+                    { new: true, runValidators: true }
+                )
+            )
+        );
+
+        res.json({ message: 'Owner ID updated for all projects successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error updating owner ID for projects' });
+    }
+};
+
+module.exports = { createProject, updateProject, deleteProject, getProjects, getProjectsByOwnerId, updateOwnerIdForProjects };
+
+

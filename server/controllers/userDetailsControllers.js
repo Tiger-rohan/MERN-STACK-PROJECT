@@ -365,5 +365,60 @@ exports.getTasksByUserIdAndProjectId = async (req, res) => {
       res.status(500).json({ message: 'Server Error', error: error.message });
     }
   };
-  
-  
+
+  exports.transferProjectData = async (req, res) => {
+    try {
+        const oldUserId = Number(req.params.oldUserId); // Get the old user ID from the request parameters
+        const newUserId = Number(req.params.newUserId); // Get the new user ID from the request parameters
+        const projectId = Number(req.params.projectId); // Get the project ID from the request parameters
+
+        // Find the user details for both old and new users
+        const oldUserDetails = await UserDetails.findOne({ user_id: oldUserId });
+        const newUserDetails = await UserDetails.findOne({ user_id: newUserId });
+
+        if (!oldUserDetails) {
+            return res.status(404).json({ message: 'Old user details not found' });
+        }
+
+        if (!newUserDetails) {
+            return res.status(404).json({ message: 'New user details not found' });
+        }
+
+        // Find the project in the old user's details
+        const projectIndex = oldUserDetails.ProjectDescription.findIndex(
+            (p) => p.project_id === projectId
+        );
+
+        if (projectIndex === -1) {
+            return res.status(404).json({ message: 'Project not found in old user details' });
+        }
+
+        // Get the project details
+        const project = oldUserDetails.ProjectDescription[projectIndex];
+
+        // Update the owner_id of the project
+        project.owner_id = newUserId;
+
+        // Update the owner_id in each task description to the new user ID
+        project.TaskDescription.forEach(task => {
+            task.owner_id = newUserId;
+        });
+
+        // Add the project to the new user's details
+        newUserDetails.ProjectDescription.push(project);
+
+        // Save the new user details
+        await newUserDetails.save();
+
+        // Remove the project from the old user's details
+        oldUserDetails.ProjectDescription.splice(projectIndex, 1);
+        
+        // Save the old user details
+        await oldUserDetails.save();
+
+        res.status(200).json({ message: 'Project data transferred successfully' });
+    } catch (error) {
+        console.error('Error transferring project data:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
