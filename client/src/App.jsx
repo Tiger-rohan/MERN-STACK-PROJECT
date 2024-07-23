@@ -21,7 +21,7 @@ axios.defaults.withCredentials = true;
 function App() {
 
   useEffect(() => {
-    document.body.style.backgroundColor = 'white';check
+    document.body.style.backgroundColor = 'white';
     document.body.style.color = 'white'; // Optional: to make text readable
 
     // Cleanup function to reset the background color when the component unmounts
