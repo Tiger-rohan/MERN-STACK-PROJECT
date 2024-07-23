@@ -97,6 +97,7 @@ export default function Register() {
               <InputLabel>Role</InputLabel>
               <Select
                 name="role"
+                label="Role"
                 value={data.role}
                 onChange={(e) => setData({ ...data, role: e.target.value })}
               >
