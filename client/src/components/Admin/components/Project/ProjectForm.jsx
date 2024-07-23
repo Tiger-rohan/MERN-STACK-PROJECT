@@ -140,6 +140,7 @@ const ProjectForm = ({ selectedProject, onCreate, onUpdate, onCancel }) => {
                 <InputLabel>Owner ID</InputLabel>
                 <Select
                     name="owner_id"
+                    label="Owner ID"
                     value={ownerId}
                     onChange={(e) => setOwnerId(e.target.value)}
                     required
