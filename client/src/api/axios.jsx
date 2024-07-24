@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
 const API = axios.create({
   baseURL: 'http://localhost:8000',
@@ -8,7 +7,7 @@ const API = axios.create({
 // Add a request interceptor to attach token
 API.interceptors.request.use(
   (config) => {
-    const token = Cookies.get('token')
+    const token = sessionStorage.getItem('token');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }

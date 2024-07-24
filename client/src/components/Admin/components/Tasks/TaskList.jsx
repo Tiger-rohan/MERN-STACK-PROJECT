@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 const TaskList = ({ tasks, onEdit, onDelete }) => {
     const [users, setUsers] = useState([]);
     const [projects, setProjects] = useState([]);
+    const { user } = useAppSelector((state) => state.user);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -80,15 +81,15 @@ const TaskList = ({ tasks, onEdit, onDelete }) => {
                             <TableCell style={{ textAlign: 'center' }}>{getUserName(task.owner_id)}</TableCell>
                             <TableCell style={{ textAlign: 'center' }}>{getProjectName(task.project_id)}</TableCell>
                             <TableCell style={{ textAlign: 'center' }}>
-                                <IconButton 
-                                    color="primary" 
+                                <IconButton
+                                    color="primary"
                                     onClick={() => onEdit(task)}
                                     size="small"
                                 >
                                     <Edit />
                                 </IconButton>
-                                <IconButton 
-                                    color="secondary" 
+                                <IconButton
+                                    color="secondary"
                                     onClick={() => onDelete(task.task_id, task.owner_id)}
                                     size="small"
                                 >
