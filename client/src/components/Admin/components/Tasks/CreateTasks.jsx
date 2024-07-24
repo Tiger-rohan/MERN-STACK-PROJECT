@@ -79,6 +79,7 @@ const CreateTask = () => {
         <InputLabel>Status</InputLabel>
         <Select
           name="task_status"
+          label="Status"
           value={taskStatus}
           onChange={(e) => setTaskStatus(e.target.value)}
         >
@@ -93,6 +94,7 @@ const CreateTask = () => {
         <InputLabel>Project ID</InputLabel>
         <Select
           name="project_id"
+          label="Project ID"
           value={projectId}
           onChange={(e) => setProjectId(e.target.value)}
           required
@@ -108,6 +110,7 @@ const CreateTask = () => {
         <InputLabel>Owner ID</InputLabel>
         <Select
           name="owner_id"
+          label="Owner ID"
           value={ownerId}
           onChange={(e) => setOwnerId(e.target.value)}
           required

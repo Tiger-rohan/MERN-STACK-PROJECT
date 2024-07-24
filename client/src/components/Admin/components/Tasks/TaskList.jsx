@@ -7,7 +7,6 @@ import { motion } from 'framer-motion';
 const TaskList = ({ tasks, onEdit, onDelete }) => {
     const [users, setUsers] = useState([]);
     const [projects, setProjects] = useState([]);
-    const { user } = useAppSelector((state) => state.user);
 
     useEffect(() => {
         const fetchUsers = async () => {
