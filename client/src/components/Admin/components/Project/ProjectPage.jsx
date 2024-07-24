@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Container, Typography, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import { Container, Typography, Button, Dialog, DialogActions, DialogContent } from '@mui/material';
 import ProjectForm from './ProjectForm';
 import ProjectList from './ProjectList';
 import SnackbarAlert from './SnackbarAlert';
@@ -32,6 +32,7 @@ const ProjectPage = () => {
             setProjects([...projects, response.data]);
             setSnackbarOpen(true);
             setDialogOpen(false);
+            fetchProjects(); // Fetch updated projects
         } catch (error) {
             console.error('Error creating project', error);
         }
@@ -45,9 +46,9 @@ const ProjectPage = () => {
             setSelectedProject(null);
             setSnackbarOpen(true);
             setDialogOpen(false);
+            fetchProjects(); // Fetch updated projects
         } catch (error) {
-            // console.error('Error updating project', error);
-            // setError('Error updating project');
+            console.error('Error updating project', error);
             setSnackbarOpen(true);
         }
     };
@@ -56,19 +57,17 @@ const ProjectPage = () => {
         try {
             await axios.delete(`/api/projects/${projectId}`);
             setProjects(projects.filter(project => project.project_id !== projectId));
-
             // Delete all tasks associated with this project
             await axios.delete(`/api/tasks/project/${projectId}`);
             // Delete from the userDetails API (remove project from all users and tasks)
             await axios.delete(`/api/userDetails/project/${projectId}`);
-            
             setSnackbarOpen(true);
+            fetchProjects(); // Fetch updated projects
         } catch (error) {
             console.error('Error deleting project', error);
             window.location.reload();
         }
     };
-    
 
     const handleSelectProject = (project) => {
         setSelectedProject(project);
@@ -114,6 +113,7 @@ const ProjectPage = () => {
                         onCreate={handleCreateProject} 
                         onUpdate={handleUpdateProject} 
                         onCancel={handleCloseDialog} 
+                        fetchProjects={fetchProjects} // Pass fetchProjects function
                     />
                 </DialogContent>
                 <DialogActions>

@@ -396,16 +396,26 @@ exports.getTasksByUserIdAndProjectId = async (req, res) => {
         // Get the project details
         const project = oldUserDetails.ProjectDescription[projectIndex];
 
-        // Update the owner_id of the project
-        project.owner_id = newUserId;
+        // Check if the new user already has the project
+        const newUserProjectIndex = newUserDetails.ProjectDescription.findIndex(
+            (p) => p.project_id === projectId
+        );
 
-        // Update the owner_id in each task description to the new user ID
-        project.TaskDescription.forEach(task => {
-            task.owner_id = newUserId;
-        });
+        if (newUserProjectIndex !== -1) {
+            // If the project already exists, update its task descriptions
+            const newUserProject = newUserDetails.ProjectDescription[newUserProjectIndex];
+        } else {
+            // Otherwise, add the entire project to the new user's details
+            // Update the owner_id of the project
+            project.owner_id = newUserId;
 
-        // Add the project to the new user's details
-        newUserDetails.ProjectDescription.push(project);
+            // Update the owner_id in each task description to the new user ID
+            project.TaskDescription.forEach(task => {
+                task.owner_id = newUserId;
+            });
+
+            newUserDetails.ProjectDescription.push(project);
+        }
 
         // Save the new user details
         await newUserDetails.save();

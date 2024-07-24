@@ -5,7 +5,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 
-const ProjectList = ({ projects, onEdit, onDelete }) => {
+const ProjectList = ({ projects, setProjects, onEdit, onDelete }) => {
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
@@ -19,6 +19,19 @@ const ProjectList = ({ projects, onEdit, onDelete }) => {
         };
 
         fetchUsers();
+    }, []);
+
+    const fetchProjects = async () => {
+        try {
+            const response = await axios.get('/api/projects');
+            setProjects(response.data);
+        } catch (error) {
+            console.error('Failed to fetch projects', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchProjects();
     }, []);
 
     const getUserName = (userId) => {
