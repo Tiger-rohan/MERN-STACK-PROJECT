@@ -29,7 +29,7 @@ app.use('/api', taskRoutes);
 //user details
 app.use('/api/userDetails',userDetails);
 
-app.use(express.static("./client/dist"));
+app.use(express.static("../client/dist"));
 app.get("*", (req,res)=>{
     res.sendFile(path.resolve(__dirname,"client","dist","index.html"))
 });
