@@ -6,7 +6,7 @@ yarn-error.log*
 pnpm-debug.log*
 
 # Vite
-dist/
+
 .vite/
 .cache/
 
@@ -48,7 +48,7 @@ tmp/
 
 # Client-specific
 client/node_modules/
-client/dist/
+
 client/.vite/
 client/.cache/
 

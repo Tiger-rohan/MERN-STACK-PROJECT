@@ -1,44 +1,82 @@
-import {useState} from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, Link } from 'react-router-dom';
+import { Box, Button, TextField, Typography, Container, Paper } from '@mui/material';
+import { motion } from 'framer-motion';
+import { loginUser } from '../actions/authAction';
 import axios from 'axios'
-import {toast} from 'react-hot-toast'
-import {useNavigate} from 'react-router-dom'
-import './pages.css'
 
 export default function Login() {
-    const navigate = useNavigate()
-    const [data, setData] = useState({
-        email: "",
-        password: "",
-    })
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuthenticated, error, user } = useSelector(state => state.user);
 
-    const loginUser = async (e) => {
-        e.preventDefault()
-        const {email, password} = data
-        try {
-            const {data} = await axios.post('/login', {email, password});
-            if (data.error) {
-                toast.error(data.error)
-            } else {
-                setData({})
-                navigate('/dashboard')
-            }
-        } catch (error) {
-            console.log(error)
-        }
+  const [data, setData] = useState({
+    email: "",
+    password: "",
+  });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (user.role === 'admin') {
+        navigate('/admin');
+      } else if (user.role === 'user') {
+        navigate('/user');
+      }
     }
+
+    if (error) {
+      toast.error(error);
+    }
+  }, [isAuthenticated, error, user, navigate]);
+
+  const login = (e) => {
+    e.preventDefault();
+    dispatch(loginUser(data));
+  };
+
   return (
-    <div>
-        <form onSubmit={loginUser}>
-        <label>
-          Email:
-        </label>
-        <input type="email" name="email" value={data.email} onChange={(e) => setData({...data, email: e.target.value})}/>
-        <label>
-          Password:
-        </label>
-        <input type="password" name="password" value={data.password} onChange={(e) => setData({...data, password: e.target.value})} />
-        <button type="submit">login</button>
-            </form>
-    </div>
-  )
+    <Container maxWidth="sm">
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Paper elevation={3} sx={{ padding: 4, marginTop: 8 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Login
+          </Typography>
+          <form onSubmit={login}>
+            <TextField
+              label="Email"
+              type="email"
+              name="email"
+              value={data.email}
+              onChange={(e) => setData({ ...data, email: e.target.value })}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Password"
+              type="password"
+              name="password"
+              value={data.password}
+              onChange={(e) => setData({ ...data, password: e.target.value })}
+              fullWidth
+              margin="normal"
+            />
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              Login
+            </Button>
+          </form>
+          <Box mt={2}>
+            <Typography variant="body2">
+              Don't have an account? <Link to="/register">Register here</Link>
+            </Typography>
+          </Box>
+        </Paper>
+      </motion.div>
+    </Container>
+  );
 }
